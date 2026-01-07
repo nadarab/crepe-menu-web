@@ -11,6 +11,7 @@ export default {
         anton: ['Anton', 'sans-serif'],
         cairo: ['Cairo', 'sans-serif'],
         bree: ['Bree Serif', 'serif'],
+        tajawal: ['Tajawal', 'sans-serif'],
       },
     },
   },

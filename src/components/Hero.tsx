@@ -37,13 +37,21 @@ const Hero = () => {
       </div>
 
       {/* Navigation Bar */}
-      <nav className="relative z-10 flex items-center justify-end px-6 md:px-12 pt-8 md:pt-10 pb-4 md:pb-6 bg-transparent backdrop-blur-0">
+      <nav className="relative z-20 flex items-center justify-end px-6 md:px-12 pt-8 md:pt-10 pb-4 md:pb-6 bg-transparent backdrop-blur-0">
         {/* Navigation Links - Right side */}
         <div className="flex items-center gap-8 md:gap-10">
           <button
+            type="button"
             onClick={() => scrollToSection('hero')}
-            className="text-white hover:text-yellow-400 transition-colors !bg-transparent !border-none !p-0 !rounded-none"
-            style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}
+            className="text-white hover:text-yellow-400 transition-colors cursor-pointer"
+            style={{ 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              padding: 0, 
+              cursor: 'pointer',
+              borderRadius: 0,
+              boxShadow: 'none'
+            }}
             aria-label="Home"
           >
             <svg
@@ -61,23 +69,53 @@ const Hero = () => {
             </svg>
           </button>
           <button
+            type="button"
             onClick={() => scrollToSection('menu')}
-            className="text-white font-bree text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors !bg-transparent !border-none !p-0 !rounded-none"
-            style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}
+            className={`text-white text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            }`}
+            style={{ 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              padding: 0, 
+              cursor: 'pointer',
+              borderRadius: 0,
+              boxShadow: 'none'
+            }}
           >
             {t('menu', { ns: 'navigation' })}
           </button>
           <button
+            type="button"
             onClick={() => window.location.href = '/rate'}
-            className="text-white font-bree text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors !bg-transparent !border-none !p-0 !rounded-none"
-            style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}
+            className={`text-white text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            }`}
+            style={{ 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              padding: 0, 
+              cursor: 'pointer',
+              borderRadius: 0,
+              boxShadow: 'none'
+            }}
           >
             {t('rate', { ns: 'navigation' })}
           </button>
           <button
+            type="button"
             onClick={() => window.location.href = '/contact'}
-            className="text-white font-bree text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors !bg-transparent !border-none !p-0 !rounded-none"
-            style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}
+            className={`text-white text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            }`}
+            style={{ 
+              backgroundColor: 'transparent', 
+              border: 'none', 
+              padding: 0, 
+              cursor: 'pointer',
+              borderRadius: 0,
+              boxShadow: 'none'
+            }}
           >
             {t('contact', { ns: 'navigation' })}
           </button>
@@ -85,25 +123,41 @@ const Hero = () => {
           {/* Language Switcher */}
           <div className="flex items-center gap-2 ml-4 border-l border-white/30 pl-4">
             <button
+              type="button"
               onClick={() => changeLanguage('en')}
-              className={`font-bree text-base md:text-lg lg:text-xl tracking-wide transition-colors !bg-transparent !border-none !p-0 !rounded-none ${
+              className={`font-bree text-base md:text-lg lg:text-xl tracking-wide transition-colors cursor-pointer ${
                 i18n.language === 'en'
                   ? 'text-yellow-400 font-semibold'
                   : 'text-white hover:text-yellow-400'
               }`}
-              style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}
+              style={{ 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                padding: 0, 
+                cursor: 'pointer',
+                borderRadius: 0,
+                boxShadow: 'none'
+              }}
             >
               EN
             </button>
             <span className="text-white/50 text-lg md:text-xl">|</span>
             <button
+              type="button"
               onClick={() => changeLanguage('ar')}
-              className={`font-cairo text-base md:text-lg lg:text-xl transition-colors !bg-transparent !border-none !p-0 !rounded-none ${
+              className={`font-bree text-base md:text-lg lg:text-xl transition-colors cursor-pointer ${
                 i18n.language === 'ar'
                   ? 'text-yellow-400 font-semibold'
                   : 'text-white hover:text-yellow-400'
               }`}
-              style={{ backgroundColor: 'transparent', border: 'none', padding: 0 }}
+              style={{ 
+                backgroundColor: 'transparent', 
+                border: 'none', 
+                padding: 0, 
+                cursor: 'pointer',
+                borderRadius: 0,
+                boxShadow: 'none'
+              }}
             >
               AR
             </button>
@@ -112,7 +166,7 @@ const Hero = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center -mt-16 md:-mt-20">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -135,7 +189,7 @@ const Hero = () => {
           className="text-center"
         >
           {i18n.language === 'ar' ? (
-            <div className="text-white font-cairo font-normal">
+            <div className="text-white font-tajawal font-normal">
               <h1 className="text-4xl md:text-5xl lg:text-6xl tracking-wide">
                 كريب
               </h1>
@@ -144,7 +198,7 @@ const Hero = () => {
               </h1>
             </div>
           ) : (
-            <div className="text-white font-anton font-normal">
+            <div className="text-white font-bree font-normal">
               <h1 className="text-4xl md:text-5xl lg:text-6xl tracking-wide">
                 ENG
               </h1>
@@ -164,7 +218,7 @@ const Hero = () => {
         className="absolute bottom-8 md:bottom-12 left-6 md:left-12 z-10 text-left"
       >
         {i18n.language === 'ar' ? (
-          <div className="text-white font-cairo font-normal leading-relaxed text-left">
+          <div className="text-white font-tajawal font-normal leading-relaxed text-left">
             <p className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
               نكهات لذيذة،
             </p>
@@ -173,7 +227,7 @@ const Hero = () => {
             </p>
           </div>
         ) : (
-          <div className="text-white font-anton font-normal leading-relaxed uppercase text-left">
+          <div className="text-white font-bree font-normal leading-relaxed uppercase text-left">
             <p className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl tracking-wide">
               RICH FLAVORS,
             </p>

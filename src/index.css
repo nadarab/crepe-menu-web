@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bree+Serif&family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bree+Serif&family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
 
 :root {
   font-family: 'Anton', 'Cairo', system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -25,19 +25,15 @@ a:hover {
   color: #535bf2;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
   font-family: 'Anton', 'Cairo', system-ui, Avenir, Helvetica, Arial, sans-serif !important;
-}
-
-.font-alexandria {
-  font-family: 'Anton', sans-serif !important;
-}
-
-.font-anton {
-  font-family: 'Anton', sans-serif !important;
 }
 
 .font-cairo {
@@ -46,6 +42,10 @@ body {
 
 .font-bree {
   font-family: 'Bree Serif', serif !important;
+}
+
+.font-tajawal {
+  font-family: 'Tajawal', sans-serif !important;
 }
 
 h1 {
@@ -66,6 +66,14 @@ button {
 }
 button:hover {
   border-color: #646cff;
+}
+/* Override for navbar buttons */
+nav button {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 button:focus,
 button:focus-visible {
