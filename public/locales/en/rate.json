@@ -1,0 +1,12 @@
+{
+  "title": "Rate Us",
+  "subtitle": "Your opinion matters to us! Please rate your experience",
+  "feedbackPlaceholder": "Tell us about your experience...",
+  "thanks": "Thanks!",
+  "submit": "Submit Rating",
+  "submitting": "Submitting...",
+  "submitted": "Submitted!",
+  "errorNoRating": "Please select a star rating",
+  "errorNoFeedback": "Please write some feedback",
+  "errorSubmit": "Failed to submit. Please try again."
+}

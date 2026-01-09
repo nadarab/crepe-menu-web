@@ -1,0 +1,24 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Images for categories (main images)
+    match /categories/{categoryId}/{imageName} {
+      // Allow public read access
+      allow read: if true;
+      
+      // Allow write access (admin dashboard is protected by unique URL)
+      // Note: In production, consider adding additional security measures
+      allow write: if true;
+    }
+    
+    // Images for menu items
+    match /items/{itemId}/{imageName} {
+      // Allow public read access
+      allow read: if true;
+      
+      // Allow write access (admin dashboard is protected by unique URL)
+      allow write: if true;
+    }
+  }
+}
