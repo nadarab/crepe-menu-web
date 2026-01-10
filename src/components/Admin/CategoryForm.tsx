@@ -14,6 +14,13 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
   const { i18n } = useTranslation();
   const isEditMode = !!initialData;
 
+  // Character limits
+  const LIMITS = {
+    TITLE: 20,
+    DESCRIPTION: 180,
+    TAGLINE: 25,
+  };
+
   const [formData, setFormData] = useState<CategoryData>({
     order: initialData?.order || 1,
     mainImage: initialData?.mainImage || '',
@@ -80,15 +87,29 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
 
     if (!formData.title.en.trim()) {
       newErrors.titleEn = 'English title is required';
+    } else if (formData.title.en.length > LIMITS.TITLE) {
+      newErrors.titleEn = `Title must be ${LIMITS.TITLE} characters or less`;
     }
     if (!formData.title.ar.trim()) {
       newErrors.titleAr = 'Arabic title is required';
+    } else if (formData.title.ar.length > LIMITS.TITLE) {
+      newErrors.titleAr = `Title must be ${LIMITS.TITLE} characters or less`;
     }
     if (!formData.description.en.trim()) {
       newErrors.descriptionEn = 'English description is required';
+    } else if (formData.description.en.length > LIMITS.DESCRIPTION) {
+      newErrors.descriptionEn = `Description must be ${LIMITS.DESCRIPTION} characters or less`;
     }
     if (!formData.description.ar.trim()) {
       newErrors.descriptionAr = 'Arabic description is required';
+    } else if (formData.description.ar.length > LIMITS.DESCRIPTION) {
+      newErrors.descriptionAr = `Description must be ${LIMITS.DESCRIPTION} characters or less`;
+    }
+    if (formData.tagline?.en && formData.tagline.en.length > LIMITS.TAGLINE) {
+      newErrors.taglineEn = `Tagline must be ${LIMITS.TAGLINE} characters or less`;
+    }
+    if (formData.tagline?.ar && formData.tagline.ar.length > LIMITS.TAGLINE) {
+      newErrors.taglineAr = `Tagline must be ${LIMITS.TAGLINE} characters or less`;
     }
     if (formData.order < 1) {
       newErrors.order = 'Order must be at least 1';
@@ -99,6 +120,15 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Helper function to get character counter color
+  const getCounterColor = (current: number, limit: number) => {
+    const remaining = limit - current;
+    if (remaining < 0) return 'text-red-600 font-bold';
+    if (remaining <= limit * 0.1) return 'text-orange-500 font-semibold'; // 10% left
+    if (remaining <= limit * 0.2) return 'text-yellow-600'; // 20% left
+    return 'text-gray-500';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -141,6 +171,9 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {i18n.language === 'ar' ? 'العنوان (إنجليزي)' : 'Title (English)'}
+          <span className={`text-xs ml-2 ${getCounterColor(formData.title.en.length, LIMITS.TITLE)}`}>
+            {formData.title.en.length}/{LIMITS.TITLE}
+          </span>
         </label>
         <input
           type="text"
@@ -151,6 +184,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
               title: { ...formData.title, en: e.target.value },
             })
           }
+          maxLength={LIMITS.TITLE}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           required
         />
@@ -163,6 +197,9 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {i18n.language === 'ar' ? 'العنوان (عربي)' : 'Title (Arabic)'}
+          <span className={`text-xs ml-2 ${getCounterColor(formData.title.ar.length, LIMITS.TITLE)}`}>
+            {formData.title.ar.length}/{LIMITS.TITLE}
+          </span>
         </label>
         <input
           type="text"
@@ -173,6 +210,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
               title: { ...formData.title, ar: e.target.value },
             })
           }
+          maxLength={LIMITS.TITLE}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           dir="rtl"
           required
@@ -186,6 +224,9 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {i18n.language === 'ar' ? 'الوصف (إنجليزي)' : 'Description (English)'}
+          <span className={`text-xs ml-2 ${getCounterColor(formData.description.en.length, LIMITS.DESCRIPTION)}`}>
+            {formData.description.en.length}/{LIMITS.DESCRIPTION}
+          </span>
         </label>
         <textarea
           value={formData.description.en}
@@ -196,6 +237,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
             })
           }
           rows={4}
+          maxLength={LIMITS.DESCRIPTION}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           required
         />
@@ -208,6 +250,9 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {i18n.language === 'ar' ? 'الوصف (عربي)' : 'Description (Arabic)'}
+          <span className={`text-xs ml-2 ${getCounterColor(formData.description.ar.length, LIMITS.DESCRIPTION)}`}>
+            {formData.description.ar.length}/{LIMITS.DESCRIPTION}
+          </span>
         </label>
         <textarea
           value={formData.description.ar}
@@ -218,6 +263,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
             })
           }
           rows={4}
+          maxLength={LIMITS.DESCRIPTION}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           dir="rtl"
           required
@@ -234,6 +280,9 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
           <span className="text-gray-500 text-xs ml-2">
             {i18n.language === 'ar' ? '(اختياري)' : '(Optional)'}
           </span>
+          <span className={`text-xs ml-2 ${getCounterColor(formData.tagline?.en?.length || 0, LIMITS.TAGLINE)}`}>
+            {formData.tagline?.en?.length || 0}/{LIMITS.TAGLINE}
+          </span>
         </label>
         <input
           type="text"
@@ -244,9 +293,13 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
               tagline: { ...formData.tagline!, en: e.target.value },
             })
           }
+          maxLength={LIMITS.TAGLINE}
           placeholder={i18n.language === 'ar' ? 'مثل: LOVE AT FIRST BITE' : 'e.g., LOVE AT FIRST BITE'}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        {errors.taglineEn && (
+          <p className="mt-1 text-sm text-red-600">{errors.taglineEn}</p>
+        )}
       </div>
 
       {/* Tagline - Arabic */}
@@ -255,6 +308,9 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
           {i18n.language === 'ar' ? 'الشعار (عربي)' : 'Tagline (Arabic)'}
           <span className="text-gray-500 text-xs ml-2">
             {i18n.language === 'ar' ? '(اختياري)' : '(Optional)'}
+          </span>
+          <span className={`text-xs ml-2 ${getCounterColor(formData.tagline?.ar?.length || 0, LIMITS.TAGLINE)}`}>
+            {formData.tagline?.ar?.length || 0}/{LIMITS.TAGLINE}
           </span>
         </label>
         <input
@@ -266,10 +322,14 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
               tagline: { ...formData.tagline!, ar: e.target.value },
             })
           }
+          maxLength={LIMITS.TAGLINE}
           placeholder={i18n.language === 'ar' ? 'مثل: حب من أول قضمة' : 'e.g., حب من أول قضمة'}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           dir="rtl"
         />
+        {errors.taglineAr && (
+          <p className="mt-1 text-sm text-red-600">{errors.taglineAr}</p>
+        )}
       </div>
 
       {/* Image Upload */}

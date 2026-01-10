@@ -32,11 +32,6 @@ const Rate = () => {
       return;
     }
 
-    if (feedback.trim() === '') {
-      setError(t('errorNoFeedback', { ns: 'rate' }));
-      return;
-    }
-
     setIsSubmitting(true);
     setError('');
 
@@ -72,7 +67,13 @@ const Rate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] relative overflow-hidden">
+    <div 
+      className="min-h-screen bg-[#1a1a1a] relative"
+      style={{
+        overflow: 'hidden',
+        touchAction: 'pan-y pinch-zoom'
+      }}
+    >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -104,9 +105,9 @@ const Rate = () => {
       </div>
 
       {/* Navigation Bar - Matching Home Page */}
-      <nav className="relative z-20 flex items-center justify-end px-6 md:px-12 pt-8 md:pt-10 pb-4 md:pb-6 bg-transparent backdrop-blur-0">
+      <nav className="relative z-20 flex items-center justify-end px-3 xs:px-4 sm:px-6 md:px-12 pt-6 xs:pt-7 sm:pt-8 md:pt-10 pb-3 xs:pb-3.5 sm:pb-4 md:pb-6 bg-transparent backdrop-blur-0">
         {/* Navigation Links - Right side */}
-        <div className="flex items-center gap-8 md:gap-10">
+        <div className="flex items-center gap-4 xs:gap-5 sm:gap-6 md:gap-8 lg:gap-10 text-sm xs:text-base">
           <button
             type="button"
             onClick={() => window.location.href = '/'}
@@ -122,7 +123,7 @@ const Rate = () => {
             aria-label="Home"
           >
             <svg
-              className="w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9"
+              className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -138,8 +139,8 @@ const Rate = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/#menu'}
-            className={`text-white text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
-              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+              i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
             }`}
             style={{ 
               backgroundColor: 'transparent', 
@@ -154,8 +155,8 @@ const Rate = () => {
           </button>
           <button
             type="button"
-            className={`text-white text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
-              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+              i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
             }`}
             style={{ 
               backgroundColor: 'transparent', 
@@ -171,8 +172,8 @@ const Rate = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/contact'}
-            className={`text-white text-base md:text-lg lg:text-xl tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
-              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+              i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
             }`}
             style={{ 
               backgroundColor: 'transparent', 
@@ -187,15 +188,15 @@ const Rate = () => {
           </button>
           
           {/* Language Switcher */}
-          <div className="flex items-center gap-2 ml-4 border-l border-white/30 pl-4">
+          <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2 ml-2 xs:ml-3 sm:ml-4 border-l border-white/30 pl-2 xs:pl-3 sm:pl-4">
             <button
               type="button"
               onClick={() => i18n.changeLanguage('en')}
-              className={`font-bree text-base md:text-lg lg:text-xl tracking-wide transition-colors cursor-pointer ${
+              className={`font-bree tracking-wide transition-colors cursor-pointer ${
                 i18n.language === 'en'
                   ? 'text-yellow-400 font-semibold'
                   : 'text-white hover:text-yellow-400'
-              }`}
+              } text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl`}
               style={{ 
                 backgroundColor: 'transparent', 
                 border: 'none', 
@@ -207,15 +208,15 @@ const Rate = () => {
             >
               EN
             </button>
-            <span className="text-white/50 text-lg md:text-xl">|</span>
+            <span className="text-white/50 text-sm xs:text-base sm:text-lg md:text-xl">|</span>
             <button
               type="button"
               onClick={() => i18n.changeLanguage('ar')}
-              className={`font-bree text-base md:text-lg lg:text-xl transition-colors cursor-pointer ${
+              className={`font-bree transition-colors cursor-pointer ${
                 i18n.language === 'ar'
                   ? 'text-yellow-400 font-semibold'
                   : 'text-white hover:text-yellow-400'
-              }`}
+              } text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl`}
               style={{ 
                 backgroundColor: 'transparent', 
                 border: 'none', 
@@ -232,7 +233,7 @@ const Rate = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-6 pt-0 md:pt-2">
+      <div className="relative z-10 container mx-auto px-3 xs:px-4 sm:px-6 pt-16 sm:pt-20 md:pt-2 flex items-center justify-center min-h-[calc(100vh-120px)] md:min-h-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -241,8 +242,8 @@ const Rate = () => {
         >
           {/* Title */}
           <h1
-            className={`text-5xl md:text-6xl lg:text-7xl text-white mb-4 ${
-              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            className={`text-white mb-3 xs:mb-3.5 sm:mb-4 ${
+              i18n.language === 'ar' ? 'font-tajawal text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl' : 'font-bree text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl'
             }`}
             style={{ 
               letterSpacing: '0.05em',
@@ -254,15 +255,15 @@ const Rate = () => {
 
           {/* Subtitle */}
           <p
-            className={`text-white/80 text-lg md:text-xl mb-8 ${
-              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+            className={`text-white/80 mb-6 xs:mb-7 sm:mb-8 ${
+              i18n.language === 'ar' ? 'font-tajawal text-base xs:text-lg sm:text-lg md:text-xl' : 'font-bree text-base xs:text-lg sm:text-lg md:text-xl'
             }`}
           >
             {t('subtitle', { ns: 'rate' })}
           </p>
 
           {/* Star Rating */}
-          <div className="flex justify-center gap-3 md:gap-4 mb-10">
+          <div className="flex justify-center gap-2 xs:gap-2.5 sm:gap-3 md:gap-4 mb-8 xs:mb-9 sm:mb-10">
             {[1, 2, 3, 4, 5].map((star) => (
               <motion.button
                 key={star}
@@ -279,7 +280,7 @@ const Rate = () => {
                 }}
               >
                 <svg
-                  className="w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 transition-all duration-200"
+                  className="w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 transition-all duration-200"
                   fill={
                     star <= (hoveredRating || rating)
                       ? '#FBBF24'
@@ -308,10 +309,10 @@ const Rate = () => {
             onChange={(e) => setFeedback(e.target.value)}
             placeholder={t('feedbackPlaceholder', { ns: 'rate' })}
             disabled={isSubmitting || isSubmitted}
-            className={`w-full h-48 bg-[#2a2a2a] text-white rounded-2xl p-6 mb-6 
+            className={`w-full h-40 xs:h-44 sm:h-48 bg-[#2a2a2a] text-white rounded-xl xs:rounded-2xl p-4 xs:p-5 sm:p-6 mb-5 xs:mb-5.5 sm:mb-6 
               placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 
               resize-none transition-opacity ${
-                i18n.language === 'ar' ? 'font-tajawal text-right' : 'font-bree text-left'
+                i18n.language === 'ar' ? 'font-tajawal text-right text-sm xs:text-base' : 'font-bree text-left text-sm xs:text-base'
               } ${isSubmitting || isSubmitted ? 'opacity-50 cursor-not-allowed' : ''}`}
             style={{
               boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)'
@@ -323,7 +324,7 @@ const Rate = () => {
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-red-400 text-sm md:text-base mb-4"
+              className="text-red-400 text-xs xs:text-sm sm:text-sm md:text-base mb-3 xs:mb-3.5 sm:mb-4"
             >
               {error}
             </motion.p>
@@ -335,24 +336,36 @@ const Rate = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             onClick={handleSubmit}
-            disabled={isSubmitting || isSubmitted}
-            className={`px-8 py-3 md:px-10 md:py-4 rounded-xl text-lg md:text-xl font-semibold 
-              transition-all duration-300 mb-6 ${
+            disabled={isSubmitting || isSubmitted || rating === 0}
+            className={`rounded-xl font-semibold 
+              transition-all duration-300 mb-5 xs:mb-5.5 sm:mb-6 ${
+                i18n.language === 'ar' ? 'font-tajawal text-base xs:text-lg sm:text-lg md:text-xl px-6 xs:px-7 sm:px-8 md:px-10 py-2.5 xs:py-3 sm:py-3 md:py-4' : 'font-bree text-base xs:text-lg sm:text-lg md:text-xl px-6 xs:px-7 sm:px-8 md:px-10 py-2.5 xs:py-3 sm:py-3 md:py-4'
+              } ${
                 i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
               } ${
                 isSubmitted
-                  ? 'bg-green-500 text-white cursor-default'
+                  ? 'text-white cursor-default'
                   : isSubmitting
-                  ? 'bg-yellow-400/50 text-gray-700 cursor-wait'
-                  : 'bg-yellow-400 text-black hover:bg-yellow-500 hover:scale-105 cursor-pointer'
+                  ? 'text-gray-900 cursor-wait'
+                  : rating === 0
+                  ? 'text-gray-500 cursor-not-allowed opacity-50'
+                  : 'text-gray-900 hover:scale-105 cursor-pointer font-bold'
               }`}
             style={{
-              boxShadow: isSubmitted || isSubmitting ? 'none' : '0 4px 15px rgba(251, 191, 36, 0.3)'
+              backgroundColor: isSubmitted 
+                ? '#10b981' 
+                : isSubmitting 
+                ? '#fde047' 
+                : rating === 0 
+                ? 'rgba(156, 163, 175, 0.3)' 
+                : '#fbbf24',
+              boxShadow: (isSubmitted || isSubmitting || rating === 0) ? 'none' : '0 4px 15px rgba(251, 191, 36, 0.5)',
+              border: 'none'
             }}
           >
             {isSubmitted ? (
               <span className="flex items-center justify-center gap-2">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 xs:w-5.5 xs:h-5.5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 {t('submitted', { ns: 'rate' })}
@@ -370,8 +383,8 @@ const Rate = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4 }}
-              className={`text-white text-2xl md:text-3xl ${
-                i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+              className={`text-white ${
+                i18n.language === 'ar' ? 'font-tajawal text-xl xs:text-2xl sm:text-2xl md:text-3xl' : 'font-bree text-xl xs:text-2xl sm:text-2xl md:text-3xl'
               }`}
               style={{ 
                 letterSpacing: '0.05em' 

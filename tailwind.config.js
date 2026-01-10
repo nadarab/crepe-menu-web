@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '375px',
+      },
       fontFamily: {
         alexandria: ['Anton', 'Cairo', 'sans-serif'],
         anton: ['Anton', 'sans-serif'],

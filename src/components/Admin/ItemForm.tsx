@@ -16,6 +16,11 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
   const { i18n } = useTranslation();
   const isEditMode = !!initialData;
 
+  // Character limits
+  const LIMITS = {
+    NAME: 17,
+  };
+
   const [formData, setFormData] = useState<MenuItemData>({
     order: initialData?.order || 1,
     image: initialData?.image || '',
@@ -81,9 +86,13 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
     }
     if (!formData.name.en.trim()) {
       newErrors.nameEn = 'English name is required';
+    } else if (formData.name.en.length > LIMITS.NAME) {
+      newErrors.nameEn = `Name must be ${LIMITS.NAME} characters or less`;
     }
     if (!formData.name.ar.trim()) {
       newErrors.nameAr = 'Arabic name is required';
+    } else if (formData.name.ar.length > LIMITS.NAME) {
+      newErrors.nameAr = `Name must be ${LIMITS.NAME} characters or less`;
     }
     if (formData.order < 1) {
       newErrors.order = 'Order must be at least 1';
@@ -97,6 +106,15 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Helper function to get character counter color
+  const getCounterColor = (current: number, limit: number) => {
+    const remaining = limit - current;
+    if (remaining < 0) return 'text-red-600 font-bold';
+    if (remaining <= limit * 0.1) return 'text-orange-500 font-semibold'; // 10% left
+    if (remaining <= limit * 0.2) return 'text-yellow-600'; // 20% left
+    return 'text-gray-500';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -169,6 +187,9 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {i18n.language === 'ar' ? 'الاسم (إنجليزي)' : 'Name (English)'}
+          <span className={`text-xs ml-2 ${getCounterColor(formData.name.en.length, LIMITS.NAME)}`}>
+            {formData.name.en.length}/{LIMITS.NAME}
+          </span>
         </label>
         <input
           type="text"
@@ -179,6 +200,7 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
               name: { ...formData.name, en: e.target.value },
             })
           }
+          maxLength={LIMITS.NAME}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           required
         />
@@ -191,6 +213,9 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {i18n.language === 'ar' ? 'الاسم (عربي)' : 'Name (Arabic)'}
+          <span className={`text-xs ml-2 ${getCounterColor(formData.name.ar.length, LIMITS.NAME)}`}>
+            {formData.name.ar.length}/{LIMITS.NAME}
+          </span>
         </label>
         <input
           type="text"
@@ -201,6 +226,7 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
               name: { ...formData.name, ar: e.target.value },
             })
           }
+          maxLength={LIMITS.NAME}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           dir="rtl"
           required
