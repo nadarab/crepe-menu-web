@@ -15,6 +15,7 @@ import {
 import { db } from '../../config/firebase';
 import type { Category, CategoryData } from '../../types/category';
 import type { MenuItem, MenuItemData } from '../../types/menuItem';
+import { dataCache } from '../../utils/dataCache';
 
 /**
  * Convert Firestore timestamp to Date
@@ -61,21 +62,34 @@ const docToCategory = async (
 
 /**
  * Firestore Service
- * Handles all Firestore database operations
+ * Handles all Firestore database operations with caching
  */
 export const firestoreService = {
   /**
    * Get all categories with their items, sorted by order
+   * Uses cache to avoid redundant network requests
    */
   async getCategories(): Promise<Category[]> {
     try {
+      // Check cache first
+      const cachedData = dataCache.getCategories();
+      if (cachedData) {
+        console.log('📦 Returning cached categories');
+        return cachedData;
+      }
+
+      console.log('🔄 Fetching categories from Firestore');
       const categoriesRef = collection(db, 'categories');
       const q = query(categoriesRef, orderBy('order', 'asc'));
       const snapshot = await getDocs(q);
 
+      // Fetch all items in parallel for better performance
       const categories = await Promise.all(
         snapshot.docs.map((doc) => docToCategory(doc))
       );
+
+      // Cache the results
+      dataCache.setCategories(categories);
 
       return categories;
     } catch (error) {
@@ -119,6 +133,10 @@ export const firestoreService = {
       };
 
       const docRef = await addDoc(collection(db, 'categories'), categoryData);
+      
+      // Clear cache since data changed
+      dataCache.clearCategories();
+      
       return docRef.id;
     } catch (error) {
       console.error('Error creating category:', error);
@@ -138,6 +156,9 @@ export const firestoreService = {
       };
 
       await updateDoc(categoryRef, updateData);
+      
+      // Clear cache since data changed
+      dataCache.clearCategories();
     } catch (error) {
       console.error('Error updating category:', error);
       throw error;
@@ -162,6 +183,9 @@ export const firestoreService = {
       // Then delete the category
       const categoryRef = doc(db, 'categories', id);
       await deleteDoc(categoryRef);
+      
+      // Clear cache since data changed
+      dataCache.clearCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
       throw error;
@@ -185,6 +209,10 @@ export const firestoreService = {
 
       const itemsRef = collection(db, 'categories', categoryId, 'items');
       const docRef = await addDoc(itemsRef, itemData);
+      
+      // Clear cache since data changed
+      dataCache.clearCategories();
+      
       return docRef.id;
     } catch (error) {
       console.error('Error creating item:', error);
@@ -208,6 +236,9 @@ export const firestoreService = {
       };
 
       await updateDoc(itemRef, updateData);
+      
+      // Clear cache since data changed
+      dataCache.clearCategories();
     } catch (error) {
       console.error('Error updating item:', error);
       throw error;
@@ -221,8 +252,65 @@ export const firestoreService = {
     try {
       const itemRef = doc(db, 'categories', categoryId, 'items', itemId);
       await deleteDoc(itemRef);
+      
+      // Clear cache since data changed
+      dataCache.clearCategories();
     } catch (error) {
       console.error('Error deleting item:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get the next order number for a new category
+   */
+  async getNextCategoryOrder(): Promise<number> {
+    try {
+      const categoriesRef = collection(db, 'categories');
+      const snapshot = await getDocs(categoriesRef);
+      
+      if (snapshot.empty) {
+        return 1;
+      }
+
+      let maxOrder = 0;
+      snapshot.docs.forEach((doc) => {
+        const order = doc.data().order || 0;
+        if (order > maxOrder) {
+          maxOrder = order;
+        }
+      });
+
+      return maxOrder + 1;
+    } catch (error) {
+      console.error('Error getting next category order:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get the next order number for a new item in a specific category
+   */
+  async getNextItemOrder(categoryId: string): Promise<number> {
+    try {
+      const itemsRef = collection(db, 'categories', categoryId, 'items');
+      const snapshot = await getDocs(itemsRef);
+      
+      if (snapshot.empty) {
+        return 1;
+      }
+
+      let maxOrder = 0;
+      snapshot.docs.forEach((doc) => {
+        const order = doc.data().order || 0;
+        if (order > maxOrder) {
+          maxOrder = order;
+        }
+      });
+
+      return maxOrder + 1;
+    } catch (error) {
+      console.error('Error getting next item order:', error);
       throw error;
     }
   },

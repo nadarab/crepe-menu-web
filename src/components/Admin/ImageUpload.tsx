@@ -198,7 +198,7 @@ const ImageUpload = ({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -232,7 +232,7 @@ const ImageUpload = ({
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-black h-2 rounded-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
                   ></div>
                 </div>
@@ -254,10 +254,10 @@ const ImageUpload = ({
             border-2 border-dashed rounded-lg p-8 text-center transition-colors
             ${
               isDragging
-                ? 'border-blue-500 bg-blue-50'
+                ? 'border-black bg-gray-50'
                 : currentPreview
                 ? 'border-gray-300 hover:border-gray-400'
-                : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                : 'border-gray-300 hover:border-black hover:bg-gray-50'
             }
             ${required && !currentPreview ? 'border-red-300' : ''}
           `}
@@ -278,12 +278,12 @@ const ImageUpload = ({
                 />
               </svg>
               <div className="text-sm text-gray-600 mb-4">
-                <span className="font-semibold text-blue-600 hover:text-blue-500 cursor-pointer">
+                <span className="font-semibold text-black hover:text-gray-700 cursor-pointer">
                   {i18n.language === 'ar' ? 'انقر للرفع' : 'Click to upload'}
                 </span>{' '}
                 {i18n.language === 'ar' ? 'أو اسحب وأفلت' : 'or drag and drop'}
               </div>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-600">
                 {i18n.language === 'ar'
                   ? `PNG, JPG, GIF حتى ${maxSizeMB}MB`
                   : `PNG, JPG, GIF up to ${maxSizeMB}MB`}
@@ -304,7 +304,7 @@ const ImageUpload = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-semibold"
+              className="mt-4 px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition-colors text-sm font-semibold"
             >
               {i18n.language === 'ar' ? 'تغيير الصورة' : 'Change Image'}
             </button>
@@ -315,7 +315,7 @@ const ImageUpload = ({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            className="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold"
           >
             {i18n.language === 'ar' ? 'اختر صورة' : 'Select Image'}
           </button>

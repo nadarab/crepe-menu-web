@@ -104,8 +104,8 @@ const Items = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4 text-black">
             {i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
           </p>
         </div>
@@ -115,8 +115,8 @@ const Items = () => {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">{error}</p>
+      <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+        <p className="text-red-800 font-semibold">{error}</p>
         <button
           onClick={loadCategories}
           className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -131,12 +131,12 @@ const Items = () => {
     <div>
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-900">
+        <h2 className="text-3xl font-bold text-black">
           {i18n.language === 'ar' ? 'العناصر' : 'Items'}
         </h2>
         <Link
           to={`${adminBasePath}/items/new`}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold flex items-center gap-2"
+          className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -151,7 +151,7 @@ const Items = () => {
         <select
           value={selectedCategoryId}
           onChange={(e) => setSelectedCategoryId(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
         >
           <option value="all">
             {i18n.language === 'ar' ? 'جميع الفئات' : 'All Categories'}
@@ -169,14 +169,14 @@ const Items = () => {
           placeholder={i18n.language === 'ar' ? 'بحث...' : 'Search...'}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 min-w-[200px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-1 min-w-[200px] px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
         />
       </div>
 
       {/* Items List */}
       {filteredItems.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <p className="text-gray-500 text-lg">
+        <div className="bg-white rounded-lg border-2 border-gray-300 shadow p-8 text-center">
+          <p className="text-black text-lg">
             {searchTerm || selectedCategoryId !== 'all'
               ? i18n.language === 'ar'
                 ? 'لا توجد نتائج'
@@ -188,7 +188,7 @@ const Items = () => {
           {!searchTerm && selectedCategoryId === 'all' && (
             <Link
               to={`${adminBasePath}/items/new`}
-              className="inline-block mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-block mt-4 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
               {i18n.language === 'ar' ? 'إنشاء أول عنصر' : 'Create First Item'}
             </Link>
@@ -209,15 +209,15 @@ const Items = () => {
               if (categoryItems.length === 0) return null;
 
               return (
-                <div key={category.id} className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                <div key={category.id} className="bg-white rounded-lg border-2 border-gray-300 shadow-md p-6">
+                  <h3 className="text-xl font-bold text-black mb-4 pb-2 border-b-2 border-gray-300">
                     {category.title[i18n.language as 'en' | 'ar']}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {categoryItems.map((item) => (
                       <div
                         key={item.id}
-                        className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                        className="border-2 border-gray-300 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                       >
                         {/* Image */}
                         <div className="h-40 bg-gray-200 relative">
@@ -234,18 +234,18 @@ const Items = () => {
                               </svg>
                             </div>
                           )}
-                          <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                          <div className="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-xs font-semibold">
                             #{item.order}
                           </div>
                         </div>
 
                         {/* Content */}
                         <div className="p-4">
-                          <h4 className="font-semibold text-gray-900 mb-1">
+                          <h4 className="font-semibold text-black mb-1">
                             {item.name[i18n.language as 'en' | 'ar']}
                           </h4>
                           {item.price !== undefined && (
-                            <p className="text-blue-600 font-bold mb-3">
+                            <p className="text-black font-bold mb-3">
                               {item.price} JD
                             </p>
                           )}
@@ -254,7 +254,7 @@ const Items = () => {
                           <div className="flex gap-2">
                             <Link
                               to={`${adminBasePath}/items/${category.id}/${item.id}/edit`}
-                              className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-center text-sm font-semibold"
+                              className="flex-1 px-3 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-center text-sm font-semibold"
                             >
                               {i18n.language === 'ar' ? 'تعديل' : 'Edit'}
                             </Link>
@@ -264,7 +264,7 @@ const Items = () => {
                                 deletingId?.categoryId === category.id &&
                                 deletingId?.itemId === item.id
                               }
-                              className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="px-3 py-2 bg-gray-200 text-black rounded-md hover:bg-gray-300 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {deletingId?.categoryId === category.id && deletingId?.itemId === item.id
                                 ? i18n.language === 'ar'

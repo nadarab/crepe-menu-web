@@ -1,9 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const ContactUs = () => {
   const { t, i18n } = useTranslation(['contact', 'navigation']);
+  const location = useLocation();
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
 
   useEffect(() => {
@@ -19,6 +21,14 @@ const ContactUs = () => {
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+  };
+
+  // Helper function to determine if a navigation item is active
+  const isActivePage = (path: string) => {
+    if (path === '/' || path === 'hero') {
+      return location.pathname === '/';
+    }
+    return location.pathname === path;
   };
 
   return (
@@ -53,7 +63,9 @@ const ContactUs = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/'}
-            className="text-white hover:text-yellow-400 transition-colors cursor-pointer"
+            className={`hover:text-yellow-400 transition-colors cursor-pointer ${
+              isActivePage('/') ? 'text-yellow-400' : 'text-white'
+            }`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -81,9 +93,9 @@ const ContactUs = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/#menu'}
-            className={`text-yellow-400 tracking-wide hover:text-yellow-300 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -98,9 +110,9 @@ const ContactUs = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/rate'}
-            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/rate') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -114,9 +126,9 @@ const ContactUs = () => {
           </button>
           <button
             type="button"
-            className={`text-white tracking-wide bg-white/10 rounded cursor-pointer ${
+            className={`tracking-wide rounded cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl px-2 xs:px-3 sm:px-4 py-1 xs:py-1.5 sm:py-2' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl px-2 xs:px-3 sm:px-4 py-1 xs:py-1.5 sm:py-2'
-            }`}
+            } ${isActivePage('/contact') ? 'text-yellow-400 bg-white/20 font-semibold' : 'text-white bg-white/10'}`}
             style={{ 
               border: 'none', 
               cursor: 'pointer',
@@ -223,47 +235,48 @@ const ContactUs = () => {
             {t('subtitle', { ns: 'contact' })}
           </p>
 
-          {/* Instagram Link */}
-          <a
-            href="https://www.instagram.com/eng.crepe?igsh=MWF3OWlncnZhdGxrcA=="
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 xs:gap-2.5 sm:gap-3 text-white hover:text-yellow-400 transition-colors group"
-          >
-            <img
-              src="/images/ContactUs/InstaIcon.png"
-              alt="Instagram"
-              className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 group-hover:scale-110 transition-transform brightness-0 invert"
-            />
-            <span className={`text-white ${
-              i18n.language === 'ar' ? 'font-tajawal text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl' : 'font-bree text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl'
-            }`}>
-              {t('instagram', { ns: 'contact' })}
-            </span>
-          </a>
+          {/* Social Links Container */}
+          <div className="flex flex-col items-center gap-2 xs:gap-2.5 sm:gap-3 md:gap-4">
+            {/* Instagram Link */}
+            <a
+              href="https://www.instagram.com/eng.crepe?igsh=MWF3OWlncnZhdGxrcA=="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 xs:gap-2 sm:gap-2.5 text-white hover:text-yellow-400 transition-colors group"
+            >
+              <img
+                src="/images/ContactUs/InstaIcon.png"
+                alt="Instagram"
+                className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 group-hover:scale-110 transition-transform brightness-0 invert"
+              />
+              <span className={`text-white ${
+                i18n.language === 'ar' ? 'font-tajawal text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl' : 'font-bree text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl'
+              }`}>
+                {t('instagram', { ns: 'contact' })}
+              </span>
+            </a>
+
+            {/* Location Link */}
+            <a
+              href="https://maps.app.goo.gl/csBc8LtzfRyb6B6t7?g_st=ic"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 xs:gap-2 sm:gap-2.5 text-white hover:text-yellow-400 transition-colors group"
+            >
+              <img
+                src="/images/ContactUs/locatioIcon.png"
+                alt="Location"
+                className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 group-hover:scale-110 transition-transform brightness-0 invert"
+              />
+              <span className={`text-white ${
+                i18n.language === 'ar' ? 'font-tajawal text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl' : 'font-bree text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl'
+              }`}>
+                Location
+              </span>
+            </a>
+          </div>
         </motion.div>
       </div>
-
-      {/* Location Icon - Bottom Right */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="absolute bottom-3 right-4 xs:bottom-3 xs:right-5 sm:bottom-4 sm:right-8 md:bottom-8 md:right-12 z-10"
-      >
-        <a
-          href="https://maps.google.com/?q=Al-Salt+Dababteh"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block hover:scale-110 transition-transform"
-        >
-          <img
-            src="/images/ContactUs/locatioIcon.png"
-            alt="Location"
-            className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 md:w-10 md:h-10 lg:w-12 lg:h-12 opacity-80 hover:opacity-100 transition-opacity brightness-0 invert"
-          />
-        </a>
-      </motion.div>
     </section>
   );
 };

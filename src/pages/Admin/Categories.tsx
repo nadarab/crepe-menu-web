@@ -87,8 +87,8 @@ const Categories = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4 text-black">
             {i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
           </p>
         </div>
@@ -98,8 +98,8 @@ const Categories = () => {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">{error}</p>
+      <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+        <p className="text-red-800 font-semibold">{error}</p>
         <button
           onClick={loadCategories}
           className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
@@ -114,12 +114,12 @@ const Categories = () => {
     <div>
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-900">
+        <h2 className="text-3xl font-bold text-black">
           {i18n.language === 'ar' ? 'الفئات' : 'Categories'}
         </h2>
         <Link
           to={`${adminBasePath}/categories/new`}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold flex items-center gap-2"
+          className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -135,14 +135,14 @@ const Categories = () => {
           placeholder={i18n.language === 'ar' ? 'بحث...' : 'Search...'}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full max-w-md px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
         />
       </div>
 
       {/* Categories List */}
       {filteredCategories.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <p className="text-gray-500 text-lg">
+        <div className="bg-white rounded-lg border-2 border-gray-300 shadow p-8 text-center">
+          <p className="text-black text-lg">
             {searchTerm
               ? i18n.language === 'ar'
                 ? 'لا توجد نتائج'
@@ -154,7 +154,7 @@ const Categories = () => {
           {!searchTerm && (
             <Link
               to={`${adminBasePath}/categories/new`}
-              className="inline-block mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-block mt-4 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
               {i18n.language === 'ar' ? 'إنشاء أول فئة' : 'Create First Category'}
             </Link>
@@ -165,7 +165,7 @@ const Categories = () => {
           {filteredCategories.map((category) => (
             <div
               key={category.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-white rounded-lg border-2 border-gray-300 shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
               {/* Image */}
               <div className="h-48 bg-gray-200 relative">
@@ -182,21 +182,21 @@ const Categories = () => {
                     </svg>
                   </div>
                 )}
-                <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-sm font-semibold">
+                <div className="absolute top-2 right-2 bg-black text-white px-2 py-1 rounded text-sm font-semibold">
                   #{category.order}
                 </div>
               </div>
 
               {/* Content */}
               <div className="p-4">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-xl font-bold text-black mb-2">
                   {category.title[i18n.language as 'en' | 'ar']}
                 </h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                <p className="text-gray-700 text-sm mb-4 line-clamp-2">
                   {category.description[i18n.language as 'en' | 'ar']}
                 </p>
                 
-                <div className="text-sm text-gray-500 mb-4">
+                <div className="text-sm text-gray-600 mb-4">
                   {category.items?.length || 0}{' '}
                   {i18n.language === 'ar' ? 'عنصر' : 'items'}
                 </div>
@@ -205,14 +205,14 @@ const Categories = () => {
                 <div className="flex gap-2">
                   <Link
                     to={`${adminBasePath}/categories/${category.id}/edit`}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-center text-sm font-semibold"
+                    className="flex-1 px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-center text-sm font-semibold"
                   >
                     {i18n.language === 'ar' ? 'تعديل' : 'Edit'}
                   </Link>
                   <button
                     onClick={() => handleDelete(category)}
                     disabled={deletingId === category.id}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-gray-200 text-black rounded-md hover:bg-gray-300 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {deletingId === category.id
                       ? i18n.language === 'ar'

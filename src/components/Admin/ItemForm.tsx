@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { storageService } from '../../services/firebase/storageService';
 import type { Category } from '../../types/category';
 import type { MenuItem, MenuItemData } from '../../types/menuItem';
 
@@ -9,16 +8,18 @@ interface ItemFormProps {
   initialData?: MenuItem & { categoryId: string };
   onSubmit: (categoryId: string, data: MenuItemData, imageFile?: File) => Promise<void>;
   onCancel: () => void;
+  onCategoryChange?: (categoryId: string) => void;
+  nextOrder?: number;
   loading?: boolean;
 }
 
-const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false }: ItemFormProps) => {
+const ItemForm = ({ categories, initialData, onSubmit, onCancel, onCategoryChange, nextOrder, loading = false }: ItemFormProps) => {
   const { i18n } = useTranslation();
   const isEditMode = !!initialData;
 
   // Character limits
   const LIMITS = {
-    NAME: 17,
+    NAME: 65,
   };
 
   const [formData, setFormData] = useState<MenuItemData>({
@@ -97,9 +98,7 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
     if (formData.order < 1) {
       newErrors.order = 'Order must be at least 1';
     }
-    if (!imagePreview && !imageFile) {
-      newErrors.image = 'Image is required';
-    }
+    // Image is now optional
     if (formData.price !== undefined && formData.price < 0) {
       newErrors.price = 'Price cannot be negative';
     }
@@ -139,14 +138,19 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Category Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'الفئة' : 'Category'}
         </label>
         <select
           value={selectedCategoryId}
-          onChange={(e) => setSelectedCategoryId(e.target.value)}
+          onChange={(e) => {
+            setSelectedCategoryId(e.target.value);
+            if (onCategoryChange && !isEditMode) {
+              onCategoryChange(e.target.value);
+            }
+          }}
           disabled={isEditMode}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black disabled:bg-gray-100 disabled:cursor-not-allowed"
           required
         >
           <option value="">
@@ -159,33 +163,50 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
           ))}
         </select>
         {errors.category && (
-          <p className="mt-1 text-sm text-red-600">{errors.category}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.category}</p>
         )}
       </div>
 
-      {/* Order */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {i18n.language === 'ar' ? 'الترتيب' : 'Order'}
-        </label>
-        <input
-          type="number"
-          min="1"
-          value={formData.order}
-          onChange={(e) =>
-            setFormData({ ...formData, order: parseInt(e.target.value) || 1 })
-          }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          required
-        />
-        {errors.order && (
-          <p className="mt-1 text-sm text-red-600">{errors.order}</p>
-        )}
-      </div>
+      {/* Order - Auto-calculated */}
+      {isEditMode && (
+        <div>
+          <label className="block text-sm font-medium text-black mb-2">
+            {i18n.language === 'ar' ? 'الترتيب' : 'Order'}
+          </label>
+          <input
+            type="number"
+            min="1"
+            value={formData.order}
+            onChange={(e) =>
+              setFormData({ ...formData, order: parseInt(e.target.value) || 1 })
+            }
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+            required
+          />
+          {errors.order && (
+            <p className="mt-1 text-sm text-red-600 font-semibold">{errors.order}</p>
+          )}
+        </div>
+      )}
+      {!isEditMode && nextOrder !== undefined && (
+        <div>
+          <label className="block text-sm font-medium text-black mb-2">
+            {i18n.language === 'ar' ? 'الترتيب (تلقائي)' : 'Order (Auto)'}
+          </label>
+          <div className="w-full px-4 py-2 border-2 border-gray-200 bg-gray-50 rounded-lg text-gray-600 font-semibold">
+            {nextOrder}
+          </div>
+          <p className="mt-1 text-sm text-gray-500">
+            {i18n.language === 'ar'
+              ? 'سيتم تعيين الترتيب تلقائياً'
+              : 'Order will be assigned automatically'}
+          </p>
+        </div>
+      )}
 
       {/* Name - English */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'الاسم (إنجليزي)' : 'Name (English)'}
           <span className={`text-xs ml-2 ${getCounterColor(formData.name.en.length, LIMITS.NAME)}`}>
             {formData.name.en.length}/{LIMITS.NAME}
@@ -201,17 +222,17 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
             })
           }
           maxLength={LIMITS.NAME}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           required
         />
         {errors.nameEn && (
-          <p className="mt-1 text-sm text-red-600">{errors.nameEn}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.nameEn}</p>
         )}
       </div>
 
       {/* Name - Arabic */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'الاسم (عربي)' : 'Name (Arabic)'}
           <span className={`text-xs ml-2 ${getCounterColor(formData.name.ar.length, LIMITS.NAME)}`}>
             {formData.name.ar.length}/{LIMITS.NAME}
@@ -227,24 +248,24 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
             })
           }
           maxLength={LIMITS.NAME}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           dir="rtl"
           required
         />
         {errors.nameAr && (
-          <p className="mt-1 text-sm text-red-600">{errors.nameAr}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.nameAr}</p>
         )}
       </div>
 
       {/* Price */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'السعر (اختياري)' : 'Price (Optional)'}
         </label>
         <input
           type="number"
           min="0"
-          step="0.1"
+          step="any"
           value={formData.price !== undefined ? formData.price : ''}
           onChange={(e) =>
             setFormData({
@@ -252,22 +273,22 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
               price: e.target.value ? parseFloat(e.target.value) : undefined,
             })
           }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           placeholder="0.00"
         />
         {errors.price && (
-          <p className="mt-1 text-sm text-red-600">{errors.price}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.price}</p>
         )}
       </div>
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {i18n.language === 'ar' ? 'الصورة' : 'Image'}
+        <label className="block text-sm font-medium text-black mb-2">
+          {i18n.language === 'ar' ? 'الصورة (اختياري)' : 'Image (Optional)'}
         </label>
         <div className="space-y-4">
           {imagePreview && (
-            <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
+            <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden border-2 border-gray-300">
               <img
                 src={imagePreview}
                 alt="Preview"
@@ -279,12 +300,12 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           />
           {errors.image && (
-            <p className="mt-1 text-sm text-red-600">{errors.image}</p>
+            <p className="mt-1 text-sm text-red-600 font-semibold">{errors.image}</p>
           )}
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-600">
             {i18n.language === 'ar'
               ? 'الحد الأقصى لحجم الملف: 10 ميجابايت'
               : 'Maximum file size: 10MB'}
@@ -297,7 +318,8 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ backgroundColor: '#000000', color: '#ffffff' }}
         >
           {loading
             ? i18n.language === 'ar'
@@ -315,7 +337,7 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, loading = false
           type="button"
           onClick={onCancel}
           disabled={loading}
-          className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50"
+          className="px-6 py-3 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50"
         >
           {i18n.language === 'ar' ? 'إلغاء' : 'Cancel'}
         </button>

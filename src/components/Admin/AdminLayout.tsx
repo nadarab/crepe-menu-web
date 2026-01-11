@@ -20,13 +20,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white shadow-sm border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-black">
                 {i18n.language === 'ar' ? 'لوحة التحكم' : 'Admin Dashboard'}
               </h1>
             </div>
@@ -36,22 +36,24 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <div className="flex items-center gap-2 border-r border-gray-300 pr-4">
                 <button
                   onClick={() => changeLanguage('en')}
-                  className={`px-3 py-1 rounded transition-colors ${
+                  className={`px-3 py-1 rounded transition-colors font-semibold ${
                     i18n.language === 'en'
-                      ? 'bg-blue-500 text-white'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-black text-white'
+                      : 'text-black hover:text-gray-700'
                   }`}
+                  style={i18n.language === 'en' ? { backgroundColor: '#000000', color: '#ffffff' } : { color: '#000000' }}
                 >
                   EN
                 </button>
                 <span className="text-gray-400">|</span>
                 <button
                   onClick={() => changeLanguage('ar')}
-                  className={`px-3 py-1 rounded transition-colors ${
+                  className={`px-3 py-1 rounded transition-colors font-semibold ${
                     i18n.language === 'ar'
-                      ? 'bg-blue-500 text-white'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-black text-white'
+                      : 'text-black hover:text-gray-700'
                   }`}
+                  style={i18n.language === 'ar' ? { backgroundColor: '#000000', color: '#ffffff' } : { color: '#000000' }}
                 >
                   AR
                 </button>
@@ -60,7 +62,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               {/* View Site Link */}
               <Link
                 to="/"
-                className="text-gray-600 hover:text-gray-900 px-4 py-2 rounded-md transition-colors"
+                className="text-black hover:text-gray-700 px-4 py-2 rounded-md transition-colors"
+                style={{ color: '#000000' }}
               >
                 {i18n.language === 'ar' ? 'عرض الموقع' : 'View Site'}
               </Link>
@@ -71,7 +74,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-sm min-h-[calc(100vh-4rem)] border-r border-gray-200">
+        <aside className="w-64 bg-white shadow-sm min-h-[calc(100vh-4rem)] border-r border-gray-300">
           <nav className="p-4">
             <ul className="space-y-2">
               <li>
@@ -79,15 +82,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   to={`${adminBasePath}/categories`}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive(`${adminBasePath}/categories`)
-                      ? 'bg-blue-50 text-blue-700 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-black text-white font-semibold'
+                      : 'text-black hover:bg-gray-100 hover:text-black'
                   }`}
+                  style={!isActive(`${adminBasePath}/categories`) ? { color: '#000000' } : undefined}
                 >
                   <svg
                     className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    style={!isActive(`${adminBasePath}/categories`) ? { color: '#000000' } : undefined}
                   >
                     <path
                       strokeLinecap="round"
@@ -104,15 +109,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   to={`${adminBasePath}/items`}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive(`${adminBasePath}/items`)
-                      ? 'bg-blue-50 text-blue-700 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-black text-white font-semibold'
+                      : 'text-black hover:bg-gray-100 hover:text-black'
                   }`}
+                  style={!isActive(`${adminBasePath}/items`) ? { color: '#000000' } : undefined}
                 >
                   <svg
                     className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    style={!isActive(`${adminBasePath}/items`) ? { color: '#000000' } : undefined}
                   >
                     <path
                       strokeLinecap="round"
@@ -129,15 +136,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   to={`${adminBasePath}/ratings`}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive(`${adminBasePath}/ratings`)
-                      ? 'bg-blue-50 text-blue-700 font-semibold'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-black text-white font-semibold'
+                      : 'text-black hover:bg-gray-100 hover:text-black'
                   }`}
+                  style={!isActive(`${adminBasePath}/ratings`) ? { color: '#000000' } : undefined}
                 >
                   <svg
                     className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    style={!isActive(`${adminBasePath}/ratings`) ? { color: '#000000' } : undefined}
                   >
                     <path
                       strokeLinecap="round"
@@ -154,7 +163,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 bg-white">
           {children}
         </main>
       </div>

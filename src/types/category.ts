@@ -15,6 +15,10 @@ export interface Category {
     en: string;
     ar: string;
   };
+  extras?: {
+    en: string;
+    ar: string;
+  }; // Optional extras information
   tagline?: {
     en: string;
     ar: string;
@@ -35,6 +39,10 @@ export interface CategoryData {
     ar: string;
   };
   description: {
+    en: string;
+    ar: string;
+  };
+  extras?: {
     en: string;
     ar: string;
   };

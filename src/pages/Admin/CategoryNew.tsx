@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { firestoreService } from '../../services/firebase/firestoreService';
@@ -14,32 +14,59 @@ const CategoryNew = () => {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nextOrder, setNextOrder] = useState<number>(1);
+
+  useEffect(() => {
+    loadNextOrder();
+  }, []);
+
+  const loadNextOrder = async () => {
+    try {
+      const order = await firestoreService.getNextCategoryOrder();
+      setNextOrder(order);
+    } catch (err: any) {
+      console.error('Error getting next order:', err);
+      setNextOrder(1);
+    }
+  };
 
   const handleSubmit = async (data: CategoryData, imageFile?: File) => {
-    if (!imageFile) {
-      setError('Image is required');
-      return;
-    }
-
     try {
       setSaving(true);
       setError(null);
 
-      // First, create the category to get an ID
-      const categoryId = await firestoreService.createCategory({
-        ...data,
-        mainImage: '', // Temporary, will update after image upload
-      });
+      // Get the next order number
+      const order = await firestoreService.getNextCategoryOrder();
 
-      // Upload the image
-      const imagePath = storageService.getCategoryImagePath(categoryId, imageFile.name);
-      const imageUrl = await storageService.uploadImage(imageFile, imagePath);
+      let imageUrl = '';
 
-      // Update category with the image URL
-      await firestoreService.updateCategory(categoryId, {
-        ...data,
-        mainImage: imageUrl,
-      });
+      // If image file is provided, upload it
+      if (imageFile) {
+        // First, create the category to get an ID
+        const categoryId = await firestoreService.createCategory({
+          ...data,
+          order, // Use auto-calculated order
+          mainImage: '', // Temporary, will update after image upload
+        });
+
+        // Upload the image
+        const imagePath = storageService.getCategoryImagePath(categoryId, imageFile.name);
+        imageUrl = await storageService.uploadImage(imageFile, imagePath);
+
+        // Update category with the image URL
+        await firestoreService.updateCategory(categoryId, {
+          ...data,
+          order, // Ensure order is preserved
+          mainImage: imageUrl,
+        });
+      } else {
+        // Create category without image
+        await firestoreService.createCategory({
+          ...data,
+          order, // Use auto-calculated order
+          mainImage: '', // Empty image URL
+        });
+      }
 
       // Navigate back to categories list
       navigate(`${adminBasePath}/categories`);
@@ -59,10 +86,10 @@ const CategoryNew = () => {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900">
+        <h2 className="text-3xl font-bold text-black">
           {i18n.language === 'ar' ? 'إضافة فئة جديدة' : 'Add New Category'}
         </h2>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-700">
           {i18n.language === 'ar'
             ? 'قم بإنشاء فئة جديدة للقائمة'
             : 'Create a new menu category'}
@@ -70,15 +97,16 @@ const CategoryNew = () => {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="mb-6 bg-red-50 border-2 border-red-500 rounded-lg p-4">
+          <p className="text-red-800 font-semibold">{error}</p>
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg border-2 border-gray-300 shadow p-6">
         <CategoryForm
           onSubmit={handleSubmit}
           onCancel={handleCancel}
+          nextOrder={nextOrder}
           loading={saving}
         />
       </div>

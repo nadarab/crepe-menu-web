@@ -1,8 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 const Hero = () => {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -15,14 +17,18 @@ const Hero = () => {
     i18n.changeLanguage(lng);
   };
 
+  // Helper function to determine if a navigation item is active
+  const isActivePage = (path: string) => {
+    if (path === '/' || path === 'hero') {
+      return location.pathname === '/';
+    }
+    return location.pathname === path;
+  };
+
   return (
     <section
       id="hero"
-      className="relative h-screen w-full"
-      style={{
-        overflow: 'hidden',
-        touchAction: 'pan-y pinch-zoom'
-      }}
+      className="relative h-screen w-full overflow-hidden bg-gray-900"
     >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
@@ -30,11 +36,21 @@ const Hero = () => {
           src="/images/Section1/hero-background.png"
           alt="Espresso brewing"
           className="hidden md:block w-full h-full object-cover"
+          loading="eager"
+          onError={(e) => {
+            console.error('Desktop hero image failed to load');
+            e.currentTarget.style.display = 'none';
+          }}
         />
         <img
           src="/images/Section1/hero-background-mobile.png"
           alt="Espresso brewing"
-          className="block md:hidden w-full h-full object-cover"
+          className="block  w-full h-full object-cover"
+          loading="eager"
+          onError={(e) => {
+            console.error('Mobile hero image failed to load');
+            e.currentTarget.style.display = 'none';
+          }}
         />
         {/* Dark overlay for better text readability */}
         <div className="absolute inset-0 bg-black/30"></div>
@@ -47,7 +63,9 @@ const Hero = () => {
           <button
             type="button"
             onClick={() => scrollToSection('hero')}
-            className="text-white hover:text-yellow-400 transition-colors cursor-pointer"
+            className={`hover:text-yellow-400 transition-colors cursor-pointer ${
+              isActivePage('/') ? 'text-yellow-400' : 'text-white'
+            }`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -75,9 +93,9 @@ const Hero = () => {
           <button
             type="button"
             onClick={() => scrollToSection('menu')}
-            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -92,9 +110,9 @@ const Hero = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/rate'}
-            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/rate') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -109,9 +127,9 @@ const Hero = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/contact'}
-            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/contact') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 

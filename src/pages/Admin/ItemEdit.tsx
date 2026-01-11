@@ -89,15 +89,19 @@ const ItemEdit = () => {
 
       // If category changed, we need to move the item
       if (newCategoryId !== categoryId) {
-        // Create item in new category
+        // Get the next order for the new category
+        const nextOrder = await firestoreService.getNextItemOrder(newCategoryId);
+        
+        // Create item in new category with new order
         await firestoreService.createItem(newCategoryId, {
           ...data,
+          order: nextOrder,
           image: imageUrl,
         });
         // Delete from old category
         await firestoreService.deleteItem(categoryId, id);
       } else {
-        // Update item in same category
+        // Update item in same category (keep existing order)
         await firestoreService.updateItem(categoryId, id, {
           ...data,
           image: imageUrl,
@@ -123,8 +127,8 @@ const ItemEdit = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4 text-black">
             {i18n.language === 'ar' ? 'جاري التحميل...' : 'Loading...'}
           </p>
         </div>
@@ -134,11 +138,11 @@ const ItemEdit = () => {
 
   if (error && !item) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">{error}</p>
+      <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+        <p className="text-red-800 font-semibold">{error}</p>
         <button
           onClick={handleCancel}
-          className="mt-4 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+          className="mt-4 px-4 py-2 bg-gray-200 text-black rounded-md hover:bg-gray-300 transition-colors"
         >
           {i18n.language === 'ar' ? 'العودة' : 'Go Back'}
         </button>
@@ -153,10 +157,10 @@ const ItemEdit = () => {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900">
+        <h2 className="text-3xl font-bold text-black">
           {i18n.language === 'ar' ? 'تعديل العنصر' : 'Edit Item'}
         </h2>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-700">
           {i18n.language === 'ar'
             ? 'قم بتحديث معلومات العنصر'
             : 'Update item information'}
@@ -164,12 +168,12 @@ const ItemEdit = () => {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="mb-6 bg-red-50 border-2 border-red-500 rounded-lg p-4">
+          <p className="text-red-800 font-semibold">{error}</p>
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg border-2 border-gray-300 shadow p-6">
         <ItemForm
           categories={categories}
           initialData={item}

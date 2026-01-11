@@ -84,7 +84,10 @@ const Ratings = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-600 text-xl">Loading ratings...</div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4 text-black text-xl">Loading ratings...</p>
+        </div>
       </div>
     );
   }
@@ -92,7 +95,9 @@ const Ratings = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-600 text-xl">{error}</div>
+        <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+          <p className="text-red-800 font-semibold text-xl">{error}</p>
+        </div>
       </div>
     );
   }
@@ -100,40 +105,40 @@ const Ratings = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Customer Ratings</h1>
-        <p className="text-gray-600">View and manage customer feedback</p>
+        <h1 className="text-3xl font-bold text-black mb-2">Customer Ratings</h1>
+        <p className="text-gray-700">View and manage customer feedback</p>
       </div>
 
       {/* Statistics Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Total Ratings */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Total Ratings</h3>
-            <p className="text-4xl font-bold text-gray-900">{stats.total}</p>
+          <div className="bg-white border-2 border-gray-300 rounded-lg shadow p-6">
+            <h3 className="text-gray-700 text-sm font-medium mb-2">Total Ratings</h3>
+            <p className="text-4xl font-bold text-black">{stats.total}</p>
           </div>
 
           {/* Average Rating */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-2">Average Rating</h3>
+          <div className="bg-white border-2 border-gray-300 rounded-lg shadow p-6">
+            <h3 className="text-gray-700 text-sm font-medium mb-2">Average Rating</h3>
             <div className="flex items-center gap-3">
-              <p className="text-4xl font-bold text-gray-900">
+              <p className="text-4xl font-bold text-black">
                 {stats.average.toFixed(1)}
               </p>
               <div className="flex flex-col">
                 {renderStars(Math.round(stats.average))}
-                <span className="text-xs text-gray-500 mt-1">out of 5</span>
+                <span className="text-xs text-gray-600 mt-1">out of 5</span>
               </div>
             </div>
           </div>
 
           {/* Rating Breakdown */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-gray-600 text-sm font-medium mb-3">Rating Breakdown</h3>
+          <div className="bg-white border-2 border-gray-300 rounded-lg shadow p-6">
+            <h3 className="text-gray-700 text-sm font-medium mb-3">Rating Breakdown</h3>
             <div className="space-y-2">
               {[5, 4, 3, 2, 1].map((star) => (
                 <div key={star} className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 w-8">{star}★</span>
+                  <span className="text-sm text-gray-700 w-8">{star}★</span>
                   <div className="flex-1 bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-yellow-400 h-2 rounded-full transition-all"
@@ -144,7 +149,7 @@ const Ratings = () => {
                       }}
                     />
                   </div>
-                  <span className="text-sm text-gray-600 w-8 text-right">
+                  <span className="text-sm text-gray-700 w-8 text-right">
                     {stats.breakdown[star]}
                   </span>
                 </div>
@@ -155,13 +160,13 @@ const Ratings = () => {
       )}
 
       {/* Ratings List */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">All Ratings</h2>
+      <div className="bg-white border-2 border-gray-300 rounded-lg shadow">
+        <div className="px-6 py-4 border-b-2 border-gray-300">
+          <h2 className="text-xl font-semibold text-black">All Ratings</h2>
         </div>
 
         {ratings.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">
+          <div className="p-12 text-center text-gray-700">
             <svg
               className="w-16 h-16 mx-auto mb-4 text-gray-300"
               fill="none"
@@ -179,7 +184,7 @@ const Ratings = () => {
             <p className="text-sm mt-1">Ratings will appear here once customers submit them</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y-2 divide-gray-300">
             {ratings.map((rating) => (
               <div key={rating.id} className="p-6 hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between">
@@ -187,23 +192,23 @@ const Ratings = () => {
                     {/* Rating Stars and Date */}
                     <div className="flex items-center gap-4 mb-3">
                       {renderStars(rating.rating)}
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-600">
                         {formatDate(rating.createdAt)}
                       </span>
                     </div>
 
                     {/* Feedback */}
-                    <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    <p className="text-black whitespace-pre-wrap leading-relaxed">
                       {rating.feedback}
                     </p>
 
                     {/* User Agent (optional info) */}
                     {rating.userAgent && (
                       <details className="mt-3">
-                        <summary className="text-xs text-gray-400 cursor-pointer hover:text-gray-600">
+                        <summary className="text-xs text-gray-500 cursor-pointer hover:text-gray-700">
                           Technical Details
                         </summary>
-                        <p className="text-xs text-gray-400 mt-1 font-mono">
+                        <p className="text-xs text-gray-500 mt-1 font-mono">
                           {rating.userAgent}
                         </p>
                       </details>

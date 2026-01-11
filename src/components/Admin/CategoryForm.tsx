@@ -7,10 +7,11 @@ interface CategoryFormProps {
   initialData?: Category;
   onSubmit: (data: CategoryData, imageFile?: File) => Promise<void>;
   onCancel: () => void;
+  nextOrder?: number;
   loading?: boolean;
 }
 
-const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: CategoryFormProps) => {
+const CategoryForm = ({ initialData, onSubmit, onCancel, nextOrder, loading = false }: CategoryFormProps) => {
   const { i18n } = useTranslation();
   const isEditMode = !!initialData;
 
@@ -18,6 +19,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
   const LIMITS = {
     TITLE: 20,
     DESCRIPTION: 180,
+    EXTRAS: 150,
     TAGLINE: 25,
   };
 
@@ -31,6 +33,10 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
     description: {
       en: initialData?.description.en || '',
       ar: initialData?.description.ar || '',
+    },
+    extras: {
+      en: initialData?.extras?.en || '',
+      ar: initialData?.extras?.ar || '',
     },
     tagline: {
       en: initialData?.tagline?.en || '',
@@ -49,6 +55,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
         mainImage: initialData.mainImage,
         title: initialData.title,
         description: initialData.description,
+        extras: initialData.extras || { en: '', ar: '' },
         tagline: initialData.tagline || { en: '', ar: '' },
       });
       setImagePreview(initialData.mainImage);
@@ -105,6 +112,12 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
     } else if (formData.description.ar.length > LIMITS.DESCRIPTION) {
       newErrors.descriptionAr = `Description must be ${LIMITS.DESCRIPTION} characters or less`;
     }
+    if (formData.extras?.en && formData.extras.en.length > LIMITS.EXTRAS) {
+      newErrors.extrasEn = `Extras must be ${LIMITS.EXTRAS} characters or less`;
+    }
+    if (formData.extras?.ar && formData.extras.ar.length > LIMITS.EXTRAS) {
+      newErrors.extrasAr = `Extras must be ${LIMITS.EXTRAS} characters or less`;
+    }
     if (formData.tagline?.en && formData.tagline.en.length > LIMITS.TAGLINE) {
       newErrors.taglineEn = `Tagline must be ${LIMITS.TAGLINE} characters or less`;
     }
@@ -114,9 +127,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
     if (formData.order < 1) {
       newErrors.order = 'Order must be at least 1';
     }
-    if (!imagePreview && !imageFile) {
-      newErrors.image = 'Image is required';
-    }
+    // Image is now optional
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -147,29 +158,46 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Order */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {i18n.language === 'ar' ? 'الترتيب' : 'Order'}
-        </label>
-        <input
-          type="number"
-          min="1"
-          value={formData.order}
-          onChange={(e) =>
-            setFormData({ ...formData, order: parseInt(e.target.value) || 1 })
-          }
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          required
-        />
-        {errors.order && (
-          <p className="mt-1 text-sm text-red-600">{errors.order}</p>
-        )}
-      </div>
+      {/* Order - Auto-calculated */}
+      {isEditMode && (
+        <div>
+          <label className="block text-sm font-medium text-black mb-2">
+            {i18n.language === 'ar' ? 'الترتيب' : 'Order'}
+          </label>
+          <input
+            type="number"
+            min="1"
+            value={formData.order}
+            onChange={(e) =>
+              setFormData({ ...formData, order: parseInt(e.target.value) || 1 })
+            }
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+            required
+          />
+          {errors.order && (
+            <p className="mt-1 text-sm text-red-600 font-semibold">{errors.order}</p>
+          )}
+        </div>
+      )}
+      {!isEditMode && nextOrder !== undefined && (
+        <div>
+          <label className="block text-sm font-medium text-black mb-2">
+            {i18n.language === 'ar' ? 'الترتيب (تلقائي)' : 'Order (Auto)'}
+          </label>
+          <div className="w-full px-4 py-2 border-2 border-gray-200 bg-gray-50 rounded-lg text-gray-600 font-semibold">
+            {nextOrder}
+          </div>
+          <p className="mt-1 text-sm text-gray-500">
+            {i18n.language === 'ar'
+              ? 'سيتم تعيين الترتيب تلقائياً'
+              : 'Order will be assigned automatically'}
+          </p>
+        </div>
+      )}
 
       {/* Title - English */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'العنوان (إنجليزي)' : 'Title (English)'}
           <span className={`text-xs ml-2 ${getCounterColor(formData.title.en.length, LIMITS.TITLE)}`}>
             {formData.title.en.length}/{LIMITS.TITLE}
@@ -185,17 +213,17 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
             })
           }
           maxLength={LIMITS.TITLE}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           required
         />
         {errors.titleEn && (
-          <p className="mt-1 text-sm text-red-600">{errors.titleEn}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.titleEn}</p>
         )}
       </div>
 
       {/* Title - Arabic */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'العنوان (عربي)' : 'Title (Arabic)'}
           <span className={`text-xs ml-2 ${getCounterColor(formData.title.ar.length, LIMITS.TITLE)}`}>
             {formData.title.ar.length}/{LIMITS.TITLE}
@@ -211,18 +239,18 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
             })
           }
           maxLength={LIMITS.TITLE}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           dir="rtl"
           required
         />
         {errors.titleAr && (
-          <p className="mt-1 text-sm text-red-600">{errors.titleAr}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.titleAr}</p>
         )}
       </div>
 
       {/* Description - English */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'الوصف (إنجليزي)' : 'Description (English)'}
           <span className={`text-xs ml-2 ${getCounterColor(formData.description.en.length, LIMITS.DESCRIPTION)}`}>
             {formData.description.en.length}/{LIMITS.DESCRIPTION}
@@ -238,17 +266,17 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
           }
           rows={4}
           maxLength={LIMITS.DESCRIPTION}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           required
         />
         {errors.descriptionEn && (
-          <p className="mt-1 text-sm text-red-600">{errors.descriptionEn}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.descriptionEn}</p>
         )}
       </div>
 
       {/* Description - Arabic */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'الوصف (عربي)' : 'Description (Arabic)'}
           <span className={`text-xs ml-2 ${getCounterColor(formData.description.ar.length, LIMITS.DESCRIPTION)}`}>
             {formData.description.ar.length}/{LIMITS.DESCRIPTION}
@@ -264,20 +292,79 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
           }
           rows={4}
           maxLength={LIMITS.DESCRIPTION}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           dir="rtl"
           required
         />
         {errors.descriptionAr && (
-          <p className="mt-1 text-sm text-red-600">{errors.descriptionAr}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.descriptionAr}</p>
+        )}
+      </div>
+
+      {/* Extras - English */}
+      <div>
+        <label className="block text-sm font-medium text-black mb-2">
+          {i18n.language === 'ar' ? 'الإضافات (إنجليزي)' : 'Extras (English)'}
+          <span className="text-gray-600 text-xs ml-2">
+            {i18n.language === 'ar' ? '(اختياري)' : '(Optional)'}
+          </span>
+          <span className={`text-xs ml-2 ${getCounterColor(formData.extras?.en?.length || 0, LIMITS.EXTRAS)}`}>
+            {formData.extras?.en?.length || 0}/{LIMITS.EXTRAS}
+          </span>
+        </label>
+        <textarea
+          value={formData.extras?.en || ''}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              extras: { ...formData.extras!, en: e.target.value },
+            })
+          }
+          rows={3}
+          maxLength={LIMITS.EXTRAS}
+          placeholder={i18n.language === 'ar' ? 'مثل: إضافات متاحة للطلب' : 'e.g., Add-ons available for order'}
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+        />
+        {errors.extrasEn && (
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.extrasEn}</p>
+        )}
+      </div>
+
+      {/* Extras - Arabic */}
+      <div>
+        <label className="block text-sm font-medium text-black mb-2">
+          {i18n.language === 'ar' ? 'الإضافات (عربي)' : 'Extras (Arabic)'}
+          <span className="text-gray-600 text-xs ml-2">
+            {i18n.language === 'ar' ? '(اختياري)' : '(Optional)'}
+          </span>
+          <span className={`text-xs ml-2 ${getCounterColor(formData.extras?.ar?.length || 0, LIMITS.EXTRAS)}`}>
+            {formData.extras?.ar?.length || 0}/{LIMITS.EXTRAS}
+          </span>
+        </label>
+        <textarea
+          value={formData.extras?.ar || ''}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              extras: { ...formData.extras!, ar: e.target.value },
+            })
+          }
+          rows={3}
+          maxLength={LIMITS.EXTRAS}
+          placeholder={i18n.language === 'ar' ? 'مثل: إضافات متاحة للطلب' : 'e.g., إضافات متاحة للطلب'}
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+          dir="rtl"
+        />
+        {errors.extrasAr && (
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.extrasAr}</p>
         )}
       </div>
 
       {/* Tagline - English */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'الشعار (إنجليزي)' : 'Tagline (English)'}
-          <span className="text-gray-500 text-xs ml-2">
+          <span className="text-gray-600 text-xs ml-2">
             {i18n.language === 'ar' ? '(اختياري)' : '(Optional)'}
           </span>
           <span className={`text-xs ml-2 ${getCounterColor(formData.tagline?.en?.length || 0, LIMITS.TAGLINE)}`}>
@@ -295,18 +382,18 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
           }
           maxLength={LIMITS.TAGLINE}
           placeholder={i18n.language === 'ar' ? 'مثل: LOVE AT FIRST BITE' : 'e.g., LOVE AT FIRST BITE'}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
         />
         {errors.taglineEn && (
-          <p className="mt-1 text-sm text-red-600">{errors.taglineEn}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.taglineEn}</p>
         )}
       </div>
 
       {/* Tagline - Arabic */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-black mb-2">
           {i18n.language === 'ar' ? 'الشعار (عربي)' : 'Tagline (Arabic)'}
-          <span className="text-gray-500 text-xs ml-2">
+          <span className="text-gray-600 text-xs ml-2">
             {i18n.language === 'ar' ? '(اختياري)' : '(Optional)'}
           </span>
           <span className={`text-xs ml-2 ${getCounterColor(formData.tagline?.ar?.length || 0, LIMITS.TAGLINE)}`}>
@@ -324,22 +411,22 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
           }
           maxLength={LIMITS.TAGLINE}
           placeholder={i18n.language === 'ar' ? 'مثل: حب من أول قضمة' : 'e.g., حب من أول قضمة'}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           dir="rtl"
         />
         {errors.taglineAr && (
-          <p className="mt-1 text-sm text-red-600">{errors.taglineAr}</p>
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.taglineAr}</p>
         )}
       </div>
 
       {/* Image Upload */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {i18n.language === 'ar' ? 'الصورة الرئيسية' : 'Main Image'}
+        <label className="block text-sm font-medium text-black mb-2">
+          {i18n.language === 'ar' ? 'الصورة الرئيسية (اختياري)' : 'Main Image (Optional)'}
         </label>
         <div className="space-y-4">
           {imagePreview && (
-            <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
+            <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden border-2 border-gray-300">
               <img
                 src={imagePreview}
                 alt="Preview"
@@ -351,12 +438,12 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           />
           {errors.image && (
-            <p className="mt-1 text-sm text-red-600">{errors.image}</p>
+            <p className="mt-1 text-sm text-red-600 font-semibold">{errors.image}</p>
           )}
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-600">
             {i18n.language === 'ar'
               ? 'الحد الأقصى لحجم الملف: 10 ميجابايت'
               : 'Maximum file size: 10MB'}
@@ -369,7 +456,8 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ backgroundColor: '#000000', color: '#ffffff' }}
         >
           {loading
             ? i18n.language === 'ar'
@@ -387,7 +475,7 @@ const CategoryForm = ({ initialData, onSubmit, onCancel, loading = false }: Cate
           type="button"
           onClick={onCancel}
           disabled={loading}
-          className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50"
+          className="px-6 py-3 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition-colors font-semibold disabled:opacity-50"
         >
           {i18n.language === 'ar' ? 'إلغاء' : 'Cancel'}
         </button>

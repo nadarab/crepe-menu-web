@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { Category } from '../../types/category';
 
 interface MenuSectionProps {
@@ -10,11 +10,13 @@ interface MenuSectionProps {
 
 const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSectionProps) => {
   const { i18n } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
   const itemsPerPage = 3; // 3 items per page
 
-  // Animation variants
+  // Animation variants - Optimized for mobile performance
+  // Disable animations if user prefers reduced motion
   const categoryVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 30 },
     visible: { 
       opacity: 1, 
       y: 0
@@ -22,7 +24,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
   };
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: shouldReduceMotion ? 1 : 0 },
     visible: {
       opacity: 1
     }
@@ -30,13 +32,11 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
 
   const itemVariants = {
     hidden: { 
-      opacity: 0, 
-      scale: 0.8,
-      y: 20
+      opacity: shouldReduceMotion ? 1 : 0,
+      y: shouldReduceMotion ? 0 : 15
     },
     visible: { 
-      opacity: 1, 
-      scale: 1,
+      opacity: 1,
       y: 0
     }
   };
@@ -59,21 +59,50 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
           };
 
           return (
-            <motion.div 
-              key={category.id} 
-              className="mb-0 lg:mb-12"
-              initial="hidden"
-              animate="visible"
-              variants={categoryVariants}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              {/* Mobile & Tablet Layout */}
-              <div className="lg:hidden flex flex-col px-2 xs:px-3 sm:px-4 py-6 sm:py-8">
+          <div 
+            key={category.id} 
+            className="relative lg:min-h-screen"
+          >
+              {/* Desktop: Individual background for each category */}
+              <div className="hidden lg:block absolute inset-0 z-0">
+                <div className="sticky top-0 h-screen w-full">
+                  <img
+                    src="/images/Backgrounds/BackgroundLap.png"
+                    alt="Background"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  {/* Dark overlay */}
+                  <div className="absolute inset-0 bg-black/50"></div>
+                </div>
+              </div>
+
+              {/* Decorative shapes (fallback) - Desktop only */}
+              <div className="hidden lg:block absolute right-0 top-0 w-1/3 h-screen opacity-10 z-0 pointer-events-none">
+                <div className="absolute top-20 right-10 w-64 h-64 bg-gray-700 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 right-20 w-96 h-96 bg-gray-800 rounded-full blur-3xl"></div>
+              </div>
+
+              {/* Content wrapper with z-index and animation */}
+              <motion.div 
+                className="relative z-10"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.15 }}
+                variants={categoryVariants}
+                transition={{ 
+                  duration: shouldReduceMotion ? 0 : 0.5, 
+                  ease: [0.22, 0.61, 0.36, 1] 
+                }}
+              >{/* Mobile & Tablet Layout */}
+              <div className="lg:hidden flex flex-col px-2 xs:px-3 sm:px-4 py-3 sm:py-4">
                 {/* Image and Text Container - Side by Side */}
-                <div className="flex gap-2 xs:gap-3 sm:gap-4 mb-6 sm:mb-8">
+                <div className="flex gap-2 xs:gap-3 sm:gap-4 mb-3 sm:mb-4 min-h-[240px] sm:min-h-[300px] md:min-h-[340px]">
                   {/* Main Image - Left */}
                   <div className="w-1/2 flex items-center justify-center">
-                    {category?.mainImage ? (
+                    {category?.mainImage && category.mainImage.trim() !== '' ? (
                       <img
                         src={category.mainImage}
                         alt={category.title[i18n.language as 'en' | 'ar']}
@@ -83,8 +112,8 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                         }}
                       />
                     ) : (
-                      <div className="w-full h-32 xs:h-40 sm:h-48 bg-gray-800/50 rounded-lg flex items-center justify-center">
-                        <svg className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-full h-32 xs:h-40 sm:h-48 bg-gray-800/30 rounded-lg flex items-center justify-center">
+                        <svg className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
@@ -111,8 +140,8 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
 
                       {/* Description */}
                       <p
-                        className={`text-white opacity-80 line-clamp-3 mb-0.5 xs:mb-1 ${
-                          i18n.language === 'ar' ? 'font-tajawal text-[10px] xs:text-xs sm:text-xs md:text-sm' : 'font-cairo text-[10px] xs:text-xs sm:text-xs md:text-sm'
+                        className={`text-white opacity-80 mb-1 xs:mb-1.5 ${
+                          i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-base' : 'font-cairo text-xs xs:text-sm sm:text-base md:text-base'
                         }`}
                         style={{
                           fontWeight: 300,
@@ -120,6 +149,24 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                       >
                         {category?.description[i18n.language as 'en' | 'ar']}
                       </p>
+
+                      {/* Extras */}
+                      {category?.extras && category.extras[i18n.language as 'en' | 'ar'] && (
+                        <div
+                          className={`text-white opacity-80 mb-1 xs:mb-1.5 ${
+                            i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg' : 'font-cairo text-xs xs:text-sm sm:text-base md:text-lg'
+                          }`}
+                          style={{
+                            fontWeight: 700,
+                          }}
+                        >
+                          {category.extras[i18n.language as 'en' | 'ar'].split('\n').map((line, index) => (
+                            <p key={index} className="mb-1">
+                              {line}
+                            </p>
+                          ))}
+                        </div>
+                      )}
 
                       {/* Tagline */}
                       {category?.tagline && (
@@ -136,14 +183,18 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                 </div>
 
               {/* Menu Items - Full Width Cards */}
-                <div className="w-full overflow-hidden" dir="ltr">
-                  <motion.div 
-                    key={`mobile-${category.id}-page-${currentPage}`}
-                    className="grid gap-1.5 xs:gap-2 sm:gap-2 md:gap-3"
+              <div className="w-full overflow-hidden" dir="ltr">
+                <motion.div 
+                  key={`mobile-${category.id}-page-${currentPage}`}
+                  className="grid gap-1.5 xs:gap-2 sm:gap-2 md:gap-3"
                     initial="hidden"
-                    animate="visible"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.15 }}
                     variants={containerVariants}
-                    transition={{ staggerChildren: 0.15, delayChildren: 0.1 }}
+                    transition={{ 
+                      staggerChildren: shouldReduceMotion ? 0 : 0.08, 
+                      delayChildren: shouldReduceMotion ? 0 : 0.05 
+                    }}
                     style={{
                       gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
                       gridAutoRows: '1fr'
@@ -154,11 +205,14 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                         key={item.id}
                         className="flex flex-col items-center h-full min-w-0 max-w-[85px] xs:max-w-none mx-auto"
                         variants={itemVariants}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        transition={{ 
+                          duration: shouldReduceMotion ? 0 : 0.35, 
+                          ease: [0.22, 0.61, 0.36, 1] 
+                        }}
                       >
                         {/* Item Image - On Top of Card */}
                         <div className="w-full h-[70px] xs:h-24 sm:h-28 md:h-36 mb-[-2.5rem] xs:mb-[-3rem] sm:mb-[-3.5rem] md:mb-[-4.5rem] relative z-10 flex items-end justify-center">
-                          {item.image ? (
+                          {item.image && item.image.trim() !== '' ? (
                             <img
                               src={item.image}
                               alt={item.name[i18n.language as 'en' | 'ar']}
@@ -169,7 +223,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <svg className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gray-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                             </div>
@@ -255,12 +309,12 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                         </svg>
                       </button>
                     </div>
-                  )}
-                </div>
+                )}
               </div>
+            </div>
 
               {/* Desktop Layout */}
-              <div className="hidden lg:block min-h-screen relative">
+              <div className="hidden lg:block min-h-screen relative py-12">
                 {/* Main Hero Image - Left Side */}
                 <div className="absolute -left-[30%] bottom-0 w-[70%] h-full z-10 flex items-end">
                   {category?.mainImage ? (
@@ -309,6 +363,24 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                       {category?.description[i18n.language as 'en' | 'ar']}
               </p>
 
+              {/* Extras */}
+                    {category?.extras && category.extras[i18n.language as 'en' | 'ar'] && (
+                <div
+                        className={`text-white text-base mb-2 opacity-70 ${
+                    i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                  }`}
+                        style={{
+                          fontWeight: 300,
+                        }}
+                >
+                  {category.extras[i18n.language as 'en' | 'ar'].split('\n').map((line, index) => (
+                    <p key={index} className="mb-1">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              )}
+
               {/* Tagline */}
                     {category?.tagline && (
                 <h3
@@ -329,19 +401,26 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                       key={`desktop-${category.id}-page-${currentPage}`}
                       className="flex gap-16 pr-0 justify-start"
                       initial="hidden"
-                      animate="visible"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.2 }}
                       variants={containerVariants}
-                      transition={{ staggerChildren: 0.15, delayChildren: 0.1 }}
+                      transition={{ 
+                        staggerChildren: shouldReduceMotion ? 0 : 0.1, 
+                        delayChildren: shouldReduceMotion ? 0 : 0.05 
+                      }}
                     >
                       {visibleItemsDesktop.map((item) => (
                         <motion.div
                     key={item.id}
                           className="min-w-[110px] w-36 flex flex-col items-center flex-shrink-0"
                           variants={itemVariants}
-                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          transition={{ 
+                            duration: shouldReduceMotion ? 0 : 0.4, 
+                            ease: [0.22, 0.61, 0.36, 1] 
+                          }}
                   >
                     {/* Item Image - On Top of Card */}
-                          <div className="w-full h-40 mb-[-7rem] relative z-10 flex items-end justify-center">
+                          <div className="w-full h-40 mb-[-6rem] relative z-10 flex items-end justify-center px-4">
                       {item.image ? (
                         <img
                           src={item.image}
@@ -432,7 +511,8 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
           )}
         </div>
           </div>
-            </motion.div>
+              </motion.div>
+              </div>
           );
         })}
     </>

@@ -1,6 +1,6 @@
 // Firebase v12+ modular SDK imports
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
-import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getFirestore, enableIndexedDbPersistence, type Firestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import type { FirebaseConfig } from '../types/firebase';
@@ -63,6 +63,22 @@ if (getApps().length === 0) {
 export const db: Firestore = getFirestore(app);
 export const storage: FirebaseStorage = getStorage(app);
 export const auth = getAuth(app);
+
+/**
+ * Enable offline persistence for faster subsequent loads
+ * Data will be cached locally and queries will be instant on repeated visits
+ */
+if (typeof window !== 'undefined') {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      // Multiple tabs open, persistence can only be enabled in one tab at a time
+      console.warn('Firebase persistence failed: Multiple tabs open');
+    } else if (err.code === 'unimplemented') {
+      // The current browser doesn't support persistence
+      console.warn('Firebase persistence not supported in this browser');
+    }
+  });
+}
 
 /**
  * Export Firebase app instance (for advanced usage if needed)

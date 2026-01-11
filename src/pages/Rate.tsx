@@ -1,16 +1,26 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import { submitRating } from '../services/firebase/ratings';
 
 const Rate = () => {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+
+  // Helper function to determine if a navigation item is active
+  const isActivePage = (path: string) => {
+    if (path === '/' || path === 'hero') {
+      return location.pathname === '/';
+    }
+    return location.pathname === path;
+  };
 
   const handleStarClick = (value: number) => {
     setRating(value);
@@ -111,7 +121,9 @@ const Rate = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/'}
-            className="text-white hover:text-yellow-400 transition-colors cursor-pointer"
+            className={`hover:text-yellow-400 transition-colors cursor-pointer ${
+              isActivePage('/') ? 'text-yellow-400' : 'text-white'
+            }`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -139,9 +151,9 @@ const Rate = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/#menu'}
-            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -155,9 +167,9 @@ const Rate = () => {
           </button>
           <button
             type="button"
-            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/rate') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
@@ -172,9 +184,9 @@ const Rate = () => {
           <button
             type="button"
             onClick={() => window.location.href = '/contact'}
-            className={`text-white tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
+            className={`tracking-wide hover:text-yellow-400 transition-colors cursor-pointer ${
               i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl' : 'font-bree text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl'
-            }`}
+            } ${isActivePage('/contact') ? 'text-yellow-400 font-semibold' : 'text-white'}`}
             style={{ 
               backgroundColor: 'transparent', 
               border: 'none', 
