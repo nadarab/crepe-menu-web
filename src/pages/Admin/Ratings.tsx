@@ -45,7 +45,8 @@ const Ratings = () => {
       await deleteRating(ratingId);
       await loadRatings(); // Reload data
     } catch (err) {
-      alert('Failed to delete rating');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete rating';
+      alert(`Failed to delete rating: ${errorMessage}`);
       console.error('Error deleting rating:', err);
     } finally {
       setDeletingId(null);

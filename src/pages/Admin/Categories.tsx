@@ -6,7 +6,7 @@ import { storageService } from '../../services/firebase/storageService';
 import type { Category } from '../../types/category';
 
 const Categories = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { secret } = useParams<{ secret: string }>();
   const adminBasePath = `/admin/${secret}`;
   

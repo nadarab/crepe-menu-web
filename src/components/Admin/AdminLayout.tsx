@@ -6,7 +6,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const location = useLocation();
   const { secret } = useParams<{ secret: string }>();
   const adminBasePath = `/admin/${secret}`;

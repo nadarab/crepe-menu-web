@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { storageService } from '../../services/firebase/storageService';
 import type { Category, CategoryData } from '../../types/category';
 
 interface CategoryFormProps {

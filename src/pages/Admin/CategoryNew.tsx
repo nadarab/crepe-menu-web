@@ -7,7 +7,7 @@ import CategoryForm from '../../components/Admin/CategoryForm';
 import type { CategoryData } from '../../types/category';
 
 const CategoryNew = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { secret } = useParams<{ secret: string }>();
   const navigate = useNavigate();
   const adminBasePath = `/admin/${secret}`;

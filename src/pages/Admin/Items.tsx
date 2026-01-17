@@ -7,7 +7,7 @@ import type { Category } from '../../types/category';
 import type { MenuItem } from '../../types/menuItem';
 
 const Items = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { secret } = useParams<{ secret: string }>();
   const adminBasePath = `/admin/${secret}`;
 

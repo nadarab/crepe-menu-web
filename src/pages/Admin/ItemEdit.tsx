@@ -8,7 +8,7 @@ import type { Category } from '../../types/category';
 import type { MenuItem, MenuItemData } from '../../types/menuItem';
 
 const ItemEdit = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const { secret, categoryId, id } = useParams<{ secret: string; categoryId: string; id: string }>();
   const navigate = useNavigate();
   const adminBasePath = `/admin/${secret}`;

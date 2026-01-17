@@ -20,5 +20,18 @@ service cloud.firestore {
         allow create, update, delete: if true;
       }
     }
+    
+    // Ratings collection
+    match /ratings/{ratingId} {
+      // Allow public read access
+      allow read: if true;
+      
+      // Allow public create access for users to submit ratings
+      allow create: if true;
+      
+      // Allow delete access (admin dashboard is protected by unique URL)
+      // Note: In production, consider adding additional security measures
+      allow delete: if true;
+    }
   }
 }

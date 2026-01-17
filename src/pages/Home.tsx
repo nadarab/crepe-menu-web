@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
 import MenuSection from '../components/Menu/MenuSection';
 import MenuSectionReverse from '../components/Menu/MenuSectionReverse';
-import ContactUs from '../components/ContactUs';
 import { firestoreService } from '../services/firebase/firestoreService';
 import type { Category } from '../types/category';
 
 const Home = () => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [categoryItemPages, setCategoryItemPages] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -17,13 +15,10 @@ const Home = () => {
 
   const loadCategories = async () => {
     try {
-      setLoading(true);
       const data = await firestoreService.getCategories();
       setCategories(data);
     } catch (error) {
       console.error('Error loading categories:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -256,6 +256,25 @@ const ContactUs = () => {
               </span>
             </a>
 
+            {/* Facebook Link */}
+            <a
+              href="https://www.facebook.com/share/17jGoGUymh/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 xs:gap-2 sm:gap-2.5 text-white hover:text-yellow-400 transition-colors group"
+            >
+              <img
+                src="/images/ContactUs/facebookIcon.png"
+                alt="Facebook"
+                className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 group-hover:scale-110 transition-transform brightness-0 invert"
+              />
+              <span className={`text-white ${
+                i18n.language === 'ar' ? 'font-tajawal text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl' : 'font-bree text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl'
+              }`}>
+                Facebook
+              </span>
+            </a>
+
             {/* Location Link */}
             <a
               href="https://maps.app.goo.gl/csBc8LtzfRyb6B6t7?g_st=ic"
