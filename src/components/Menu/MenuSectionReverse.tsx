@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import type { Category } from '../../types/category';
 
 interface MenuSectionReverseProps {
@@ -9,14 +10,35 @@ interface MenuSectionReverseProps {
 }
 
 const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: MenuSectionReverseProps) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const shouldReduceMotion = useReducedMotion();
   const itemsPerPage = 3; // 3 items per page
 
+  // Detect screen size for responsive item count
+  const [isXL, setIsXL] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsXL(typeof window !== 'undefined' && window.innerWidth >= 1280);
+      setIsSmallScreen(typeof window !== 'undefined' && window.innerWidth < 750);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Detect mobile device for performance optimization
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+  
+  // Disable scroll-triggered animations on mobile for better performance
+  const disableScrollAnimations = isMobile;
+
   // Animation variants - Optimized for mobile performance
-  // Disable animations if user prefers reduced motion
+  // Disable animations if user prefers reduced motion or on mobile
   const categoryVariants = {
-    hidden: { opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 30 },
+    hidden: { opacity: (shouldReduceMotion || disableScrollAnimations) ? 1 : 0, y: (shouldReduceMotion || disableScrollAnimations) ? 0 : 30 },
     visible: { 
       opacity: 1, 
       y: 0
@@ -24,7 +46,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
   };
 
   const containerVariants = {
-    hidden: { opacity: shouldReduceMotion ? 1 : 0 },
+    hidden: { opacity: (shouldReduceMotion || disableScrollAnimations) ? 1 : 0 },
     visible: {
       opacity: 1
     }
@@ -32,8 +54,8 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
 
   const itemVariants = {
     hidden: { 
-      opacity: shouldReduceMotion ? 1 : 0,
-      y: shouldReduceMotion ? 0 : 15
+      opacity: (shouldReduceMotion || disableScrollAnimations) ? 1 : 0,
+      y: (shouldReduceMotion || disableScrollAnimations) ? 0 : 15
     },
     visible: { 
       opacity: 1,
@@ -45,15 +67,21 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
     <>
       {categories.map((category) => {
         const items = category?.items || [];
+        // Sort items by ID in ascending order (1, 2, 3...)
+        const sortedItems = [...items].sort((a, b) => {
+          const idA = Number(a.id) || 0;
+          const idB = Number(b.id) || 0;
+          return idA - idB;
+        });
         const currentPage = categoryItemPages[category.id] || 0;
-        const totalPages = Math.ceil(items.length / itemsPerPage);
-        // Reverse: start from the end and go backwards
-        const startIndex = (totalPages - 1 - currentPage) * itemsPerPage;
-        // Mobile: Show 4 items, Desktop: Show 4 items (3 full + 1 half visible)
-        const visibleItemsMobile = items.slice(startIndex, startIndex + 4).reverse();
-        const visibleItemsDesktop = items.slice(startIndex, startIndex + 4).reverse();
+        const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
+        // Start from the beginning and go forward
+        const startIndex = currentPage * itemsPerPage;
+        // Desktop: Show 4 items, XL: Show 6 items
+        const desktopItemCount = isXL ? 6 : 4;
+        const visibleItemsDesktop = sortedItems.slice(startIndex, startIndex + desktopItemCount);
 
-        const goToPrevPage = () => {
+        const goToNextPage = () => {
           if (currentPage < totalPages - 1) {
             onSetItemPage(category.id, currentPage + 1);
           }
@@ -62,7 +90,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
         return (
           <div 
             key={category.id} 
-            className="relative min-h-screen"
+            className="relative lg:min-h-screen"
           >
             {/* Desktop: Individual background for each category */}
             <div className="hidden lg:block absolute inset-0 z-0">
@@ -99,9 +127,9 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
               }}
             >
             {/* Mobile & Tablet Layout - Reversed */}
-            <div className="lg:hidden flex flex-col px-2 xs:px-3 sm:px-4 py-6 sm:py-8">
+            <div className="lg:hidden flex flex-col px-2 xs:px-3 sm:px-4 py-3 sm:py-4">
               {/* Image and Text Container - Side by Side (Reversed) */}
-              <div className="flex gap-2 xs:gap-3 sm:gap-4 mb-6 sm:mb-8 min-h-[240px] sm:min-h-[300px] md:min-h-[340px]">
+              <div className="flex gap-2 xs:gap-3 sm:gap-4 mb-3 sm:mb-4 min-h-[240px] sm:min-h-[300px] md:min-h-[340px]">
                 {/* Text Section - Left */}
                 <div className="w-1/2 flex flex-col justify-center min-w-0">
                   <div className={i18n.language === 'ar' ? 'text-right' : 'text-left'}>
@@ -122,7 +150,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
 
                     {/* Description */}
                     <p
-                      className={`text-white opacity-80 mb-1 xs:mb-1.5 ${
+                      className={`text-white mb-1 xs:mb-1.5 ${
                         i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-base' : 'font-cairo text-xs xs:text-sm sm:text-base md:text-base'
                       }`}
                       style={{
@@ -135,7 +163,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                     {/* Extras */}
                     {category?.extras && category.extras[i18n.language as 'en' | 'ar'] && (
                       <div
-                        className={`text-white opacity-80 mb-1 xs:mb-1.5 ${
+                        className={`text-white mb-1 xs:mb-1.5 ${
                           i18n.language === 'ar' ? 'font-tajawal text-xs xs:text-sm sm:text-base md:text-lg' : 'font-cairo text-xs xs:text-sm sm:text-base md:text-lg'
                         }`}
                         style={{
@@ -184,11 +212,18 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                 </div>
               </div>
 
-              {/* Menu Items - Full Width Cards */}
-              <div className="w-full overflow-hidden" dir="ltr">
+              {/* Menu Items - Horizontal Scrollable */}
+              <div 
+                className="w-full overflow-x-auto overflow-y-visible" 
+                dir="ltr"
+                style={{
+                  scrollBehavior: 'smooth',
+                  WebkitOverflowScrolling: 'touch',
+                }}
+              >
                 <motion.div 
-                  key={`mobile-${category.id}-page-${currentPage}`}
-                  className="grid gap-1.5 xs:gap-2 sm:gap-2 md:gap-3"
+                  key={`mobile-${category.id}`}
+                  className="flex gap-3 xs:gap-4 sm:gap-4 md:gap-5"
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.15 }}
@@ -198,14 +233,15 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                     delayChildren: shouldReduceMotion ? 0 : 0.05 
                   }}
                   style={{
-                    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-                    gridAutoRows: '1fr'
+                    width: 'max-content',
                   }}
                 >
-                  {visibleItemsMobile.map((item) => (
+                  {sortedItems.map((item) => (
                     <motion.div
                       key={item.id}
-                      className="flex flex-col items-center h-full min-w-0 max-w-[85px] xs:max-w-none mx-auto"
+                      className={`flex flex-col items-center h-full flex-shrink-0 ${
+                        isSmallScreen ? 'w-[110px]' : 'w-[85px] xs:w-[90px] sm:w-[100px] md:w-[110px]'
+                      }`}
                       variants={itemVariants}
                       transition={{ 
                         duration: shouldReduceMotion ? 0 : 0.35, 
@@ -213,7 +249,11 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                       }}
                     >
                       {/* Item Image - On Top of Card */}
-                      <div className="w-full h-[70px] xs:h-24 sm:h-28 md:h-36 mb-[-2.5rem] xs:mb-[-3rem] sm:mb-[-3.5rem] md:mb-[-4.5rem] relative z-10 flex items-end justify-center">
+                      <div className={`w-full relative z-10 flex items-end justify-center ${
+                        isSmallScreen 
+                          ? 'h-28 mb-[-3.5rem]' 
+                          : 'h-[70px] xs:h-24 sm:h-28 md:h-36 mb-[-2.5rem] xs:mb-[-3rem] sm:mb-[-3.5rem] md:mb-[-4.5rem]'
+                      }`}>
                         {item.image && item.image.trim() !== '' ? (
                           <img
                             src={item.image}
@@ -234,7 +274,11 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
 
                       {/* Item Card - Info Section */}
                       <div 
-                        className="w-full flex flex-col items-center justify-center text-center relative rounded-xl xs:rounded-2xl sm:rounded-2xl md:rounded-3xl px-1 xs:px-1.5 sm:px-1.5 md:px-2 pt-[3rem] xs:pt-[3.5rem] sm:pt-[3.5rem] md:pt-[4.5rem] pb-2 xs:pb-[0.75rem]"
+                        className={`w-full flex flex-col items-center justify-center text-center relative rounded-xl xs:rounded-2xl sm:rounded-2xl md:rounded-3xl ${
+                          isSmallScreen
+                            ? 'px-2 pt-[3.5rem] pb-3'
+                            : 'px-1 xs:px-1.5 sm:px-1.5 md:px-2 pt-[3rem] xs:pt-[3.5rem] sm:pt-[3.5rem] md:pt-[4.5rem] pb-2 xs:pb-[0.75rem]'
+                        }`}
                         style={{
                           background: '#ffffff',
                           boxShadow: `
@@ -246,72 +290,82 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                       >
                         {/* Item Name */}
                         <h4
-                          className={`font-bold text-gray-900 uppercase leading-tight line-clamp-2 ${
-                            i18n.language === 'ar' ? 'font-tajawal text-[9px] xs:text-[10px] sm:text-xs md:text-sm' : 'font-bree text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs'
+                          className={`font-bold text-black uppercase leading-tight line-clamp-3 ${
+                            i18n.language === 'ar' 
+                              ? `font-tajawal ${isSmallScreen ? 'text-xs' : 'text-[9px] xs:text-[10px] sm:text-xs md:text-sm'}` 
+                              : `font-cairo ${isSmallScreen ? 'text-[10px]' : 'text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs'}`
                           }`}
                           style={{
-                            minHeight: '2em',
+                            minHeight: '3em',
                             display: '-webkit-box',
-                            WebkitLineClamp: 2,
+                            WebkitLineClamp: 3,
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
-                            marginBottom: '0.25rem'
+                            marginBottom: '0.25rem',
+                            fontWeight: 700
                           }}
                         >
                           {item.name[i18n.language as 'en' | 'ar']}
                         </h4>
 
-                        {/* Price */}
-                        {item.price !== undefined && (
-                          <p className={`font-semibold text-gray-700 ${
-                            i18n.language === 'ar' ? 'text-[9px] xs:text-[10px] sm:text-xs md:text-sm' : 'text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs'
+                        {/* Prices - Size-specific */}
+                        {(item.priceM !== undefined || item.priceL !== undefined || item.priceLiter !== undefined) ? (
+                          <div className={`flex flex-col items-center justify-center gap-0.5 ${
+                            i18n.language === 'ar' 
+                              ? isSmallScreen ? 'text-[10px]' : 'text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs'
+                              : isSmallScreen ? 'text-[9px]' : 'text-[7px] xs:text-[8px] sm:text-[9px] md:text-[10px]'
+                          }`}>
+                            {item.priceM !== undefined && (
+                              <span className="font-semibold text-black whitespace-nowrap">
+                                M: {item.priceM} JD
+                              </span>
+                            )}
+                            {item.priceL !== undefined && (
+                              <span className="font-semibold text-black whitespace-nowrap">
+                                L: {item.priceL} JD
+                              </span>
+                            )}
+                            {item.priceLiter !== undefined && (
+                              <span className="font-semibold text-black whitespace-nowrap">
+                                Ltr: {item.priceLiter} JD
+                              </span>
+                            )}
+                          </div>
+                        ) : item.price !== undefined ? (
+                          <p className={`font-semibold text-black ${
+                            i18n.language === 'ar' 
+                              ? `font-tajawal ${isSmallScreen ? 'text-xs' : 'text-[9px] xs:text-[10px] sm:text-xs md:text-sm'}` 
+                              : `font-cairo ${isSmallScreen ? 'text-[10px]' : 'text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs'}`
                           }`}>
                             {item.price} JD
                           </p>
-                        )}
+                        ) : null}
                       </div>
                     </motion.div>
                   ))}
                 </motion.div>
+              </div>
 
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-1.5 xs:gap-2 mt-3 xs:mt-4">
-                    <button
-                      onClick={goToPrevPage}
-                      disabled={currentPage >= totalPages - 1}
-                      className="transition-opacity disabled:opacity-30 disabled:cursor-not-allowed mr-0.5 xs:mr-1"
-                      style={{
-                        color: '#e5e5e5',
-                        background: 'transparent',
-                        border: 'none',
-                        padding: 0,
-                      }}
-                      aria-label="Previous page"
-                    >
-                      <svg className="w-5 h-5 xs:w-6 xs:h-6 sm:w-6 sm:h-6 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24" transform="scale(-1, 1)">
-                        <path d="M5.5 5l7 7-7 7V5z M13 5l7 7-7 7V5z" />
-                      </svg>
-                    </button>
-
-                    {Array.from({ length: totalPages }).map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => onSetItemPage(category.id, index)}
-                        className={`transition-all p-0 ${
-                          index === currentPage ? 'border-2 border-white' : 'border-0'
-                        }`}
-                        style={{
-                          backgroundColor: index === currentPage ? '#e5e5e5' : '#4a4a4a',
-                          width: 'clamp(18px, 5vw, 24px)',
-                          height: 'clamp(8px, 2vw, 10px)',
-                          borderRadius: '999px',
-                        }}
-                        aria-label={`Go to page ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                )}
+              {/* Order Now Button - Mobile */}
+              <div className="flex justify-center mt-4 sm:mt-6">
+                <a
+                  href="https://www.talabat.com/ar/jordan/eng-crepe"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`px-6 sm:px-8 py-2 sm:py-3 text-black font-bold uppercase rounded-lg transition-colors inline-block text-center ${
+                    i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                  }`}
+                  style={{
+                    fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+                    backgroundColor: '#fbbf24',
+                    border: 'none',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f59e0b'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fbbf24'}
+                >
+                  {t('orderNow')}
+                </a>
               </div>
             </div>
 
@@ -338,11 +392,11 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
               </div>
 
               {/* Title Section */}
-              <div className="absolute top-[12%] md:top-[15%] right-[32%] max-w-xl lg:max-w-2xl xl:max-w-3xl z-20">
+              <div className="absolute top-[12%] md:top-[15%] lg:top-[10%] xl:top-[15%] right-[38%] xl:right-[40%] max-w-xl lg:max-w-2xl xl:max-w-3xl z-20">
                 <div className={i18n.language === 'ar' ? 'text-left' : 'text-right'}>
                   {/* Category Title */}
                   <h2
-                    className={`text-7xl xl:text-8xl text-white mb-1 md:mb-2 whitespace-nowrap -mr-8 ${
+                    className={`text-7xl xl:text-9xl text-white mb-1 md:mb-2 lg:mb-4 xl:mb-6 whitespace-nowrap -mr-8 ${
                       i18n.language === 'ar' ? 'font-tajawal' : 'font-dancing'
                     }`}
                     style={{
@@ -355,7 +409,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
 
                   {/* Description */}
                   <p
-                    className={`text-white text-lg mb-2 opacity-80 line-clamp-4 ${
+                    className={`text-white text-lg xl:text-xl mb-2 line-clamp-4 ${
                       i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                     }`}
                     style={{
@@ -365,21 +419,64 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                     {category?.description[i18n.language as 'en' | 'ar']}
                   </p>
 
-                  {/* Extras */}
-                  {category?.extras && category.extras[i18n.language as 'en' | 'ar'] && (
-                    <div
-                      className={`text-white text-base mb-2 opacity-70 ${
-                        i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
-                      }`}
-                      style={{
-                        fontWeight: 300,
-                      }}
-                    >
-                      {category.extras[i18n.language as 'en' | 'ar'].split('\n').map((line, index) => (
-                        <p key={index} className="mb-1">
-                          {line}
-                        </p>
-                      ))}
+                  {/* Extras with Order Now Button (if extras exists) */}
+                  {category?.extras && category.extras[i18n.language as 'en' | 'ar'] ? (
+                    <div className="flex items-start gap-4 xl:gap-6 mb-2">
+                      {/* Order Now Button - Desktop */}
+                      <div className="flex-shrink-0">
+                        <a
+                          href="https://www.talabat.com/ar/jordan/eng-crepe"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`px-8 xl:px-10 py-3 xl:py-4 text-black font-bold uppercase rounded-lg transition-colors text-lg xl:text-xl inline-block text-center ${
+                            i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                          }`}
+                          style={{
+                            backgroundColor: '#fbbf24',
+                            border: 'none',
+                            textDecoration: 'none',
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f59e0b'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fbbf24'}
+                        >
+                          {t('orderNow')}
+                        </a>
+                      </div>
+                      <div
+                        className={`text-white text-base xl:text-lg flex-1 ${
+                          i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                        }`}
+                        style={{
+                          fontWeight: 700,
+                        }}
+                      >
+                        {category.extras[i18n.language as 'en' | 'ar'].split('\n').map((line, index) => (
+                          <p key={index} className="mb-1">
+                            {line}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    /* Order Now Button - Desktop (if no extras) */
+                    <div className="mb-2">
+                      <a
+                        href="https://www.talabat.com/ar/jordan/eng-crepe"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`px-8 xl:px-10 py-3 xl:py-4 text-black font-bold uppercase rounded-lg transition-colors text-lg xl:text-xl inline-block ${
+                          i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                        }`}
+                        style={{
+                          backgroundColor: '#fbbf24',
+                          border: 'none',
+                          textDecoration: 'none',
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f59e0b'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fbbf24'}
+                      >
+                        {t('orderNow')}
+                      </a>
                     </div>
                   )}
 
@@ -397,11 +494,11 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
               </div>
 
               {/* Menu Items - Left Side */}
-              <div className="absolute left-0 bottom-6 w-[43.5rem] overflow-hidden z-20" dir="ltr">
+              <div className="absolute left-0 bottom-3 w-[43.5rem] xl:w-[70rem] overflow-hidden z-20" dir="ltr">
                 <div className="pb-4">
                   <motion.div 
                     key={`desktop-${category.id}-page-${currentPage}`}
-                    className="flex flex-row-reverse gap-16 pr-0 justify-start"
+                    className="flex flex-row-reverse gap-16 lg:gap-12 xl:gap-10 pr-0 justify-start"
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
@@ -414,7 +511,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                     {visibleItemsDesktop.map((item) => (
                       <motion.div
                         key={item.id}
-                        className="min-w-[110px] w-36 flex flex-col items-center flex-shrink-0"
+                        className="min-w-[110px] w-36 xl:w-48 flex flex-col items-center flex-shrink-0"
                         variants={itemVariants}
                         transition={{ 
                           duration: shouldReduceMotion ? 0 : 0.4, 
@@ -422,7 +519,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                         }}
                       >
                         {/* Item Image - On Top of Card */}
-                        <div className="w-full h-40 mb-[-6rem] relative z-10 flex items-end justify-center px-4">
+                        <div className="w-full h-40 xl:h-52 mb-[-6rem] xl:mb-[-7.5rem] relative z-10 flex items-end justify-center px-4">
                           {item.image ? (
                             <img
                               src={item.image}
@@ -443,7 +540,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
 
                         {/* Item Card - Info Section */}
                         <div 
-                          className="w-full pt-24 pb-5 px-3 flex flex-col items-center text-center relative rounded-3xl"
+                          className="w-full pt-24 xl:pt-32 pb-5 xl:pb-6 px-3 xl:px-4 flex flex-col items-center text-center relative rounded-3xl"
                           style={{
                             background: '#ffffff',
                             boxShadow: `
@@ -454,19 +551,48 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                         >
                           {/* Item Name */}
                           <h4
-                            className={`text-xs font-bold text-gray-900 uppercase mb-0.5 leading-tight line-clamp-2 ${
-                              i18n.language === 'ar' ? 'font-tajawal' : 'font-bree'
+                            className={`text-sm xl:text-base font-bold text-black uppercase mb-0.5 leading-tight line-clamp-2 ${
+                              i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                             }`}
+                            style={{
+                              fontWeight: 900
+                            }}
                           >
                             {item.name[i18n.language as 'en' | 'ar']}
                           </h4>
 
-                          {/* Price */}
-                          {item.price !== undefined && (
-                            <p className="text-sm font-semibold text-gray-700">
+                          {/* Prices - Size-specific */}
+                          {(item.priceM !== undefined || item.priceL !== undefined || item.priceLiter !== undefined) ? (
+                            <div className="flex flex-col items-center justify-center gap-0.5 text-[10px] xl:text-xs">
+                              {item.priceM !== undefined && (
+                                <span className={`font-bold text-black whitespace-nowrap ${
+                                  i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                                }`}>
+                                  M: {item.priceM} JD
+                                </span>
+                              )}
+                              {item.priceL !== undefined && (
+                                <span className={`font-bold text-black whitespace-nowrap ${
+                                  i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                                }`}>
+                                  L: {item.priceL} JD
+                                </span>
+                              )}
+                              {item.priceLiter !== undefined && (
+                                <span className={`font-bold text-black whitespace-nowrap ${
+                                  i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                                }`}>
+                                  Ltr: {item.priceLiter} JD
+                                </span>
+                              )}
+                            </div>
+                          ) : item.price !== undefined ? (
+                            <p className={`text-sm xl:text-base font-bold text-black ${
+                              i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
+                            }`}>
                               {item.price} JD
                             </p>
-                          )}
+                          ) : null}
                         </div>
                       </motion.div>
                     ))}
@@ -477,7 +603,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                 {totalPages > 1 && (
                   <div className="flex items-center justify-center gap-3 mt-1">
                     <button
-                      onClick={goToPrevPage}
+                      onClick={goToNextPage}
                       disabled={currentPage >= totalPages - 1}
                       className="transition-opacity disabled:opacity-30 disabled:cursor-not-allowed mr-2"
                       style={{
@@ -486,7 +612,7 @@ const MenuSectionReverse = ({ categories, categoryItemPages, onSetItemPage }: Me
                         border: 'none',
                         padding: 0,
                       }}
-                      aria-label="Previous page"
+                      aria-label="Next page"
                     >
                       <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 24 24" transform="scale(-1, 1)">
                         <path d="M5.5 5l7 7-7 7V5z M13 5l7 7-7 7V5z" />

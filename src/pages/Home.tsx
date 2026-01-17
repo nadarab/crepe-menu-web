@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
 import MenuSection from '../components/Menu/MenuSection';
 import MenuSectionReverse from '../components/Menu/MenuSectionReverse';
@@ -34,9 +34,75 @@ const Home = () => {
     }));
   };
 
-  // Split categories into two groups: odd and even indexed
-  const oddCategories = categories.filter((_, index) => index % 2 === 0);
-  const evenCategories = categories.filter((_, index) => index % 2 !== 0);
+  // Group categories by layout type while maintaining order
+  // This approach renders in batches for better performance while preserving alternating layout
+  const renderCategories = () => {
+    const elements: React.ReactElement[] = [];
+    let currentBatch: Category[] = [];
+    let currentType: 'odd' | 'even' | null = null;
+
+    categories.forEach((category, index) => {
+      const numericId = !isNaN(Number(category.id)) ? Number(category.id) : category.order;
+      const isOddId = numericId % 2 !== 0;
+      const type = isOddId ? 'odd' : 'even';
+
+      // If type changes or it's the last category, render the current batch
+      if (currentType !== null && currentType !== type) {
+        // Render the batch
+        if (currentType === 'odd') {
+          elements.push(
+            <MenuSection
+              key={`batch-${elements.length}`}
+              categories={currentBatch}
+              categoryItemPages={categoryItemPages}
+              onSetItemPage={handleSetItemPage}
+            />
+          );
+        } else {
+          elements.push(
+            <MenuSectionReverse
+              key={`batch-${elements.length}`}
+              categories={currentBatch}
+              categoryItemPages={categoryItemPages}
+              onSetItemPage={handleSetItemPage}
+            />
+          );
+        }
+        // Start new batch
+        currentBatch = [category];
+        currentType = type;
+      } else {
+        // Add to current batch
+        currentBatch.push(category);
+        currentType = type;
+      }
+
+      // Handle last category
+      if (index === categories.length - 1) {
+        if (currentType === 'odd') {
+          elements.push(
+            <MenuSection
+              key={`batch-${elements.length}`}
+              categories={currentBatch}
+              categoryItemPages={categoryItemPages}
+              onSetItemPage={handleSetItemPage}
+            />
+          );
+        } else {
+          elements.push(
+            <MenuSectionReverse
+              key={`batch-${elements.length}`}
+              categories={currentBatch}
+              categoryItemPages={categoryItemPages}
+              onSetItemPage={handleSetItemPage}
+            />
+          );
+        }
+      }
+    });
+
+    return elements;
+  };
 
   return (
     <div className="bg-gray-900">
@@ -59,18 +125,8 @@ const Home = () => {
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
-        {/* Menu Sections - Alternating normal and reverse */}
-        <MenuSection
-          categories={oddCategories}
-          categoryItemPages={categoryItemPages}
-          onSetItemPage={handleSetItemPage}
-        />
-
-        <MenuSectionReverse
-          categories={evenCategories}
-          categoryItemPages={categoryItemPages}
-          onSetItemPage={handleSetItemPage}
-        />
+        {/* Menu Sections - Alternating based on category ID, batched for performance */}
+        {renderCategories()}
       </div>
 
     </div>

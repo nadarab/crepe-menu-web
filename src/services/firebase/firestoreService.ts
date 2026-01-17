@@ -32,6 +32,19 @@ const convertTimestamps = (data: DocumentData): any => {
 };
 
 /**
+ * Remove undefined values from an object (Firestore doesn't accept undefined)
+ */
+const removeUndefined = (obj: any): any => {
+  const cleaned: any = {};
+  for (const key in obj) {
+    if (obj[key] !== undefined) {
+      cleaned[key] = obj[key];
+    }
+  }
+  return cleaned;
+};
+
+/**
  * Convert Firestore document to Category with items
  */
 const docToCategory = async (
@@ -150,10 +163,10 @@ export const firestoreService = {
   async updateCategory(id: string, data: Partial<CategoryData>): Promise<void> {
     try {
       const categoryRef = doc(db, 'categories', id);
-      const updateData = {
+      const updateData = removeUndefined({
         ...data,
         updatedAt: Timestamp.now(),
-      };
+      });
 
       await updateDoc(categoryRef, updateData);
       
@@ -201,11 +214,11 @@ export const firestoreService = {
   ): Promise<string> {
     try {
       const now = Timestamp.now();
-      const itemData = {
+      const itemData = removeUndefined({
         ...data,
         createdAt: now,
         updatedAt: now,
-      };
+      });
 
       const itemsRef = collection(db, 'categories', categoryId, 'items');
       const docRef = await addDoc(itemsRef, itemData);
@@ -230,10 +243,10 @@ export const firestoreService = {
   ): Promise<void> {
     try {
       const itemRef = doc(db, 'categories', categoryId, 'items', itemId);
-      const updateData = {
+      const updateData = removeUndefined({
         ...data,
         updatedAt: Timestamp.now(),
-      };
+      });
 
       await updateDoc(itemRef, updateData);
       

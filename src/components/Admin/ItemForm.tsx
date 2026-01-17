@@ -30,6 +30,9 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, onCategoryChang
       ar: initialData?.name.ar || '',
     },
     price: initialData?.price,
+    priceM: initialData?.priceM,
+    priceL: initialData?.priceL,
+    priceLiter: initialData?.priceLiter,
   });
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
@@ -46,6 +49,9 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, onCategoryChang
         image: initialData.image,
         name: initialData.name,
         price: initialData.price,
+        priceM: initialData.priceM,
+        priceL: initialData.priceL,
+        priceLiter: initialData.priceLiter,
       });
       setSelectedCategoryId(initialData.categoryId);
       setImagePreview(initialData.image);
@@ -102,6 +108,15 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, onCategoryChang
     if (formData.price !== undefined && formData.price < 0) {
       newErrors.price = 'Price cannot be negative';
     }
+    if (formData.priceM !== undefined && formData.priceM < 0) {
+      newErrors.priceM = 'Price M cannot be negative';
+    }
+    if (formData.priceL !== undefined && formData.priceL < 0) {
+      newErrors.priceL = 'Price L cannot be negative';
+    }
+    if (formData.priceLiter !== undefined && formData.priceLiter < 0) {
+      newErrors.priceLiter = 'Price Liter cannot be negative';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -149,8 +164,7 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, onCategoryChang
               onCategoryChange(e.target.value);
             }
           }}
-          disabled={isEditMode}
-          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
           required
         >
           <option value="">
@@ -257,10 +271,10 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, onCategoryChang
         )}
       </div>
 
-      {/* Price */}
+      {/* Price - Legacy (kept for backwards compatibility) */}
       <div>
         <label className="block text-sm font-medium text-black mb-2">
-          {i18n.language === 'ar' ? 'السعر (اختياري)' : 'Price (Optional)'}
+          {i18n.language === 'ar' ? 'السعر (اختياري - قديم)' : 'Price (Optional - Legacy)'}
         </label>
         <input
           type="number"
@@ -278,6 +292,78 @@ const ItemForm = ({ categories, initialData, onSubmit, onCancel, onCategoryChang
         />
         {errors.price && (
           <p className="mt-1 text-sm text-red-600 font-semibold">{errors.price}</p>
+        )}
+      </div>
+
+      {/* Price - Medium */}
+      <div>
+        <label className="block text-sm font-medium text-black mb-2">
+          {i18n.language === 'ar' ? 'السعر - وسط (اختياري)' : 'Price - Medium (Optional)'}
+        </label>
+        <input
+          type="number"
+          min="0"
+          step="any"
+          value={formData.priceM !== undefined ? formData.priceM : ''}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              priceM: e.target.value ? parseFloat(e.target.value) : undefined,
+            })
+          }
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+          placeholder="0.00"
+        />
+        {errors.priceM && (
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.priceM}</p>
+        )}
+      </div>
+
+      {/* Price - Large */}
+      <div>
+        <label className="block text-sm font-medium text-black mb-2">
+          {i18n.language === 'ar' ? 'السعر - كبير (اختياري)' : 'Price - Large (Optional)'}
+        </label>
+        <input
+          type="number"
+          min="0"
+          step="any"
+          value={formData.priceL !== undefined ? formData.priceL : ''}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              priceL: e.target.value ? parseFloat(e.target.value) : undefined,
+            })
+          }
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+          placeholder="0.00"
+        />
+        {errors.priceL && (
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.priceL}</p>
+        )}
+      </div>
+
+      {/* Price - Liter */}
+      <div>
+        <label className="block text-sm font-medium text-black mb-2">
+          {i18n.language === 'ar' ? 'السعر - لتر (اختياري)' : 'Price - Liter (Optional)'}
+        </label>
+        <input
+          type="number"
+          min="0"
+          step="any"
+          value={formData.priceLiter !== undefined ? formData.priceLiter : ''}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              priceLiter: e.target.value ? parseFloat(e.target.value) : undefined,
+            })
+          }
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+          placeholder="0.00"
+        />
+        {errors.priceLiter && (
+          <p className="mt-1 text-sm text-red-600 font-semibold">{errors.priceLiter}</p>
         )}
       </div>
 

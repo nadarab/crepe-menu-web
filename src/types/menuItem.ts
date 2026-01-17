@@ -9,7 +9,10 @@ export interface MenuItem {
     ar: string;
   };
   image: string; // Firebase Storage URL
-  price?: number; // Optional price
+  price?: number; // Optional price (deprecated - use size-specific prices)
+  priceM?: number; // Medium price
+  priceL?: number; // Large price
+  priceLiter?: number; // Liter price
   createdAt: Date | any; // Firestore Timestamp
   updatedAt: Date | any; // Firestore Timestamp
 }
@@ -25,5 +28,8 @@ export interface MenuItemData {
   };
   image: string;
   price?: number;
+  priceM?: number;
+  priceL?: number;
+  priceLiter?: number;
 }
 
