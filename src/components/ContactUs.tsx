@@ -223,14 +223,14 @@ const ContactUs = () => {
         >
           {/* Title */}
           <h1 className={`font-bold text-white leading-tight ${
-            i18n.language === 'ar' ? 'font-tajawal text-[3rem] xs:text-[3.5rem] sm:text-[5rem] md:text-[7rem] lg:text-[9rem] xl:text-[11rem]' : 'font-bree text-[3rem] xs:text-[3.5rem] sm:text-[5rem] md:text-[7rem] lg:text-[9rem] xl:text-[11rem]'
+            i18n.language === 'ar' ? 'font-tajawal text-[3rem] xs:text-[3.5rem] sm:text-[5rem] md:text-[7rem] lg:text-[9rem]' : 'font-bree text-[3rem] xs:text-[3.5rem] sm:text-[5rem] md:text-[7rem] lg:text-[9rem]'
           } mb-3 xs:mb-3.5 sm:mb-4 md:mb-6`}>
             {t('title', { ns: 'contact' })}
           </h1>
 
           {/* Subtitle */}
           <p className={`text-white/90 leading-relaxed mx-auto ${
-            i18n.language === 'ar' ? 'font-tajawal text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl max-w-[18rem] xs:max-w-[20rem] sm:max-w-[22rem] md:max-w-[28rem] lg:max-w-[36rem] xl:max-w-[42rem]' : 'font-bree text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl max-w-[18rem] xs:max-w-[20rem] sm:max-w-[22rem] md:max-w-[28rem] lg:max-w-[36rem] xl:max-w-[42rem]'
+            i18n.language === 'ar' ? 'font-tajawal text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl max-w-[18rem] xs:max-w-[20rem] sm:max-w-[22rem] md:max-w-[28rem] lg:max-w-[36rem]' : 'font-bree text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl max-w-[18rem] xs:max-w-[20rem] sm:max-w-[22rem] md:max-w-[28rem] lg:max-w-[36rem]'
           } mb-4 xs:mb-5 sm:mb-6 md:mb-8`}>
             {t('subtitle', { ns: 'contact' })}
           </p>

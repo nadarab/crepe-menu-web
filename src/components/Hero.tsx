@@ -199,7 +199,7 @@ const Hero = () => {
           <img
             src="/images/Section1/logo.png"
             alt="Logo"
-            className="w-40 xs:w-48 sm:w-56 md:w-64 lg:w-72 xl:w-80 2xl:w-96 h-auto object-contain"
+            className="w-40 xs:w-48 sm:w-56 md:w-64 lg:w-72 h-auto object-contain"
             style={{
               maxHeight: 'clamp(250px, 50vh, 500px)'
             }}
@@ -244,19 +244,19 @@ const Hero = () => {
       >
         {i18n.language === 'ar' ? (
           <div className="text-white font-tajawal font-normal leading-relaxed text-left">
-            <p className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
+            <p className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
               نكهات لذيذة،
             </p>
-            <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl mt-1 xs:mt-1.5 sm:mt-2 md:mt-3">
+            <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl mt-1 xs:mt-1.5 sm:mt-2 md:mt-3">
               جودة مميزة
             </p>
           </div>
         ) : (
           <div className="text-white font-bree font-normal leading-relaxed uppercase text-left">
-            <p className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl tracking-wide">
+            <p className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-wide">
               RICH FLAVORS,
             </p>
-            <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl mt-1 xs:mt-1.5 sm:mt-2 md:mt-3 tracking-wide">
+            <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl mt-1 xs:mt-1.5 sm:mt-2 md:mt-3 tracking-wide">
               PREMIUM QUALITY
             </p>
           </div>

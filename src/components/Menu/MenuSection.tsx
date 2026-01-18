@@ -390,11 +390,11 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
         </div>
 
         {/* Title Section */}
-                <div className="absolute top-[12%] md:top-[15%] lg:top-[10%] xl:top-[15%] left-[38%] xl:left-[40%] max-w-xl lg:max-w-2xl xl:max-w-3xl z-20">
+                <div className="absolute top-[12%] md:top-[15%] lg:top-[10%] left-[38%] max-w-xl lg:max-w-2xl z-20">
                   <div className={i18n.language === 'ar' ? 'text-right' : 'text-left'}>
               {/* Category Title */}
               <h2
-                      className={`text-7xl xl:text-9xl text-white mb-1 md:mb-2 lg:mb-4 xl:mb-6 whitespace-nowrap -ml-8 ${
+                      className={`text-7xl text-white mb-1 md:mb-2 lg:mb-4 whitespace-nowrap -ml-8 ${
                   i18n.language === 'ar' ? 'font-tajawal' : 'font-dancing'
                 }`}
                 style={{
@@ -407,7 +407,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
 
               {/* Description */}
               <p
-                      className={`text-white text-lg xl:text-xl mb-2 line-clamp-4 ${
+                      className={`text-white text-lg mb-2 line-clamp-4 ${
                         i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                 }`}
                       style={{
@@ -419,9 +419,9 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
 
               {/* Extras with Order Now Button (if extras exists) */}
                     {category?.extras && category.extras[i18n.language as 'en' | 'ar'] ? (
-                <div className="flex items-start gap-4 xl:gap-6 mb-2">
+                <div className="flex items-start gap-4 mb-2">
                   <div
-                        className={`text-white text-base xl:text-lg flex-1 ${
+                        className={`text-white text-base flex-1 ${
                     i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                   }`}
                         style={{
@@ -440,7 +440,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                     href="https://www.talabat.com/ar/jordan/eng-crepe"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`px-8 xl:px-10 py-3 xl:py-4 text-black font-bold uppercase rounded-lg transition-colors text-lg xl:text-xl inline-block text-center ${
+                    className={`px-8 py-3 text-black font-bold uppercase rounded-lg transition-colors text-lg inline-block text-center ${
                       i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                     }`}
                     style={{
@@ -462,7 +462,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                     href="https://www.talabat.com/ar/jordan/eng-crepe"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`px-8 xl:px-10 py-3 xl:py-4 text-black font-bold uppercase rounded-lg transition-colors text-lg xl:text-xl inline-block ${
+                    className={`px-8 py-3 text-black font-bold uppercase rounded-lg transition-colors text-lg inline-block ${
                       i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                     }`}
                     style={{
@@ -492,11 +492,11 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
         </div>
 
               {/* Menu Items - Right Side */}
-              <div className="absolute right-0 bottom-3 w-[43.5rem] xl:w-[70rem] overflow-hidden z-20" dir="ltr">
+              <div className="absolute right-0 bottom-3 w-[43.5rem] overflow-hidden z-20" dir="ltr">
                 <div className="pb-4">
                     <motion.div 
                       key={`desktop-${category.id}-page-${currentPage}`}
-                      className="flex gap-16 lg:gap-12 xl:gap-10 pr-0 justify-start"
+                      className="flex gap-16 lg:gap-12 pr-0 justify-start"
                       initial="hidden"
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.2 }}
@@ -509,7 +509,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                       {visibleItemsDesktop.map((item) => (
                         <motion.div
                     key={item.id}
-                          className="min-w-[110px] w-36 xl:w-48 flex flex-col items-center flex-shrink-0"
+                          className="min-w-[110px] w-36 flex flex-col items-center flex-shrink-0"
                           variants={itemVariants}
                           transition={{ 
                             duration: shouldReduceMotion ? 0 : 0.4, 
@@ -517,7 +517,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                           }}
                   >
                     {/* Item Image - On Top of Card */}
-                          <div className="w-full h-40 xl:h-52 mb-[-6rem] xl:mb-[-7.5rem] relative z-10 flex items-end justify-center px-4">
+                          <div className="w-full h-40 mb-[-6rem] relative z-10 flex items-end justify-center px-4">
                       {item.image ? (
                         <img
                           src={item.image}
@@ -538,7 +538,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
 
                           {/* Item Card - Info Section */}
                     <div 
-                            className="w-full pt-24 xl:pt-32 pb-5 xl:pb-6 px-3 xl:px-4 flex flex-col items-center text-center relative rounded-3xl"
+                            className="w-full pt-24 pb-5 px-3 flex flex-col items-center text-center relative rounded-3xl"
                       style={{
                         background: '#ffffff',
                         boxShadow: `
@@ -549,7 +549,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                     >
                       {/* Item Name */}
                       <h4
-                              className={`text-sm xl:text-base font-bold text-black uppercase mb-0.5 leading-tight line-clamp-2 ${
+                              className={`text-sm font-bold text-black uppercase mb-0.5 leading-tight line-clamp-2 ${
                           i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                         }`}
                         style={{
@@ -561,7 +561,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
 
                       {/* Prices - Size-specific */}
                       {(item.priceM !== undefined || item.priceL !== undefined || item.priceLiter !== undefined) ? (
-                        <div className="flex flex-col items-center justify-center gap-0.5 text-[10px] xl:text-xs">
+                        <div className="flex flex-col items-center justify-center gap-0.5 text-[10px]">
                           {item.priceM !== undefined && (
                             <span className={`font-bold text-black whitespace-nowrap ${
                               i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
@@ -585,7 +585,7 @@ const MenuSection = ({ categories, categoryItemPages, onSetItemPage }: MenuSecti
                           )}
                         </div>
                       ) : item.price !== undefined ? (
-                        <p className={`text-sm xl:text-base font-bold text-black ${
+                        <p className={`text-sm font-bold text-black ${
                           i18n.language === 'ar' ? 'font-tajawal' : 'font-cairo'
                         }`}>
                           {item.price} JD
